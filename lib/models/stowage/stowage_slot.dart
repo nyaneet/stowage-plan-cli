@@ -1,3 +1,4 @@
+import 'package:stowage_plan/models/container/container.dart';
 ///
 /// Simple representation of stowage slot,
 /// a place where container can be loaded.
@@ -46,7 +47,19 @@ abstract interface class StowageSlot {
   /// along the vertical axis, measured in m.
   double get zMax;
   ///
-  /// Offset value to next stowage slot along the vertical axis,
+  /// Minimal offset value to next stowage slot along the vertical axis,
   /// measured in m.
-  double get zTopSeparation;
+  double get zMinSeparation;
+  ///
+  /// Creates and returns a stowage slot for next tier.
+  /// TODO: document [zOffset]
+  /// Returns `null` if next tier slot can not be created.
+  StowageSlot? upper({double zOffset = 0.0});
+  ///
+  /// Returns copy of stowage slot that fits given [container].
+  StowageSlot? fitted({required Container container});
+  ///
+  /// Creates and returns a copy of this stowage slot with the given fields
+  /// replaced by the non-null parameter values.
+  StowageSlot copyWith();
 }

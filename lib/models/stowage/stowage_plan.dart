@@ -15,14 +15,28 @@ abstract interface class StowagePlan {
     int tier,
   );
   ///
-  /// Creates [List] with all stowage slots and containers loaded into them.
-  List<({StowageSlot slot, Container? container})> toStowageList();
+  /// Creates [List] with all stowage slots and containers loaded into them
+  /// filtered by given [bay], [row] and [tier] numbers.
+  List<({StowageSlot slot, Container? container})> toStowageList({
+    int? bay,
+    int? row,
+    int? tier,
+  });
   ///
   /// Puts [container] into stowage slot with position specified by
   /// [bay], [row] and [tier] numbers.
-  void putContainerAt();
+  void putContainerAt(
+    Container container, {
+    required int bay,
+    required int row,
+    required int tier,
+  });
   ///
-  /// Removes [container] from stowage slot with position specified by
+  /// Removes container from stowage slot with position specified by
   /// [bay], [row] and [tier] numbers.
-  void removeContainerAt();
+  void removeContainerAt({
+    required int bay,
+    required int row,
+    required int tier,
+  });
 }
