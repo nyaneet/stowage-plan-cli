@@ -34,24 +34,25 @@ extension PrettyPrint on StowagePlan {
           (a, b) => a > b ? a : b,
         );
     for (int tier in _tierIterator(maxTier)) {
-      String line = '${tier.toString().padLeft(2, '0')} ';
+      final String tierNumber = tier.toString().padLeft(2, '0');
+      String slotsLine = '';
       for (int row in _rowIterator(maxRow, withZeroRow)) {
         final slot = slotsInBay.firstWhereOrNull(
           (s) => s.row == row && s.tier == tier,
         );
         switch (slot) {
           case null:
-            line += _nullSlot;
+            slotsLine += _nullSlot;
             break;
           case Slot(containerId: final int _):
-            line += _occupiedSlot;
+            slotsLine += _occupiedSlot;
             break;
           case Slot(containerId: null):
-            line += _emptySlot;
+            slotsLine += _emptySlot;
             break;
         }
       }
-      print(line);
+      if (slotsLine.trim().isNotEmpty) print('$tierNumber $slotsLine');
     }
     String rowNumbers = _rowNumbersPad;
     for (int row in _rowIterator(maxRow, withZeroRow)) {
