@@ -70,6 +70,7 @@ class StandardSlot implements Slot {
     final tierSeparation = verticalSeparation ?? minVerticalSeparation;
     final leftZUpper = rightZ + tierSeparation;
     final rightZUpper = leftZUpper + _standardHeight;
+    if (tierSeparation < minVerticalSeparation) return null;
     if (rightZUpper > maxHeight) return null;
     return copyWith(
       containerId: null,
