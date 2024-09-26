@@ -2,7 +2,7 @@ import 'package:stowage_plan/models/container/container.dart';
 ///
 /// Simple representation of stowage slot,
 /// a place where container can be loaded.
-abstract interface class StowageSlot {
+abstract interface class Slot {
   ///
   /// Bay number of stowage slot,
   /// in accordance with stowage numbering system for rows
@@ -21,45 +21,67 @@ abstract interface class StowageSlot {
   ///
   /// Coordinate of the leftmost point of stowage slot
   /// along the longitudinal axis, measured in m.
-  double get x1;
+  double get leftX;
   ///
   /// Coordinate of the rightmost point of stowage slot
   /// along the longitudinal axis, measured in m.
-  double get x2;
+  double get rightX;
   ///
   /// Coordinate of the leftmost point of stowage slot
   /// along the transverse axis, measured in m.
-  double get y1;
+  double get leftY;
   ///
   /// Coordinate of the rightmost point of stowage slot
   /// along the transverse axis, measured in m.
-  double get y2;
+  double get rightY;
   ///
   /// Coordinate of the leftmost point of stowage slot
   /// along the vertical axis, measured in m.
-  double get z1;
+  double get leftZ;
   ///
   /// Coordinate of the rightmost point of stowage slot
   /// along the vertical axis, measured in m.
-  double get z2;
+  double get rightZ;
   ///
   /// Maximum allowed value of the rightmost point of stowage slot
   /// along the vertical axis, measured in m.
-  double get zMax;
+  double get maxHeight;
   ///
-  /// Minimal offset value to next stowage slot along the vertical axis,
+  /// Minimal allowed vertical distance to next stowage slot in the tier above,
   /// measured in m.
-  double get zMinSeparation;
+  double get minVerticalSeparation;
   ///
-  /// Creates and returns a stowage slot for next tier.
-  /// TODO: document [zOffset]
-  /// Returns `null` if next tier slot can not be created.
-  StowageSlot? upper({double zOffset = 0.0});
+  /// Identifier of container that is placed in this slot.
+  /// If slot is empty, [containerId] is `null`.
+  int? get containerId;
   ///
-  /// Returns copy of stowage slot that fits given [container].
-  StowageSlot? fitted({required Container container});
+  /// Creates and returns empty stowage slot for the next tier above this slot.
+  ///
+  /// The [verticalSeparation] parameter specifies the vertical distance between
+  /// this slot and the new slot. If [verticalSeparation] is `null`, the
+  /// [minVerticalSeparation] value is used.
+  ///
+  /// Returns `null` if a slot for the next tier cannot be created
+  /// (e.g., new slot exceeds [maxHeight] or [verticalSeparation]
+  /// is less than [minVerticalSeparation]).
+  Slot? createUpperSlot({double? verticalSeparation});
+  ///
+  /// Creates and returns a copy of this slot with the given [container] placed in it.
+  ///
+  /// If the operation cannot be performed (e.g., the slot already contains a container),
+  /// returns `null`.
+  /// The new slot's [rightZ] coordinate will be adjusted to fit the container's height.
+  Slot? withContainer(Container container);
+  ///
+  /// Creates and returns a copy of this slot with the container removed.
+  ///
+  /// If the operation cannot be performed (e.g., the slot is already empty),
+  /// returns `null`.
+  Slot? empty();
   ///
   /// Creates and returns a copy of this stowage slot with the given fields
   /// replaced by the non-null parameter values.
-  StowageSlot copyWith();
+  ///
+  /// The [containerId] value is always replaced, even if it is `null`.
+  Slot copyWith({required int? containerId});
 }

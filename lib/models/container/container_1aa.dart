@@ -5,11 +5,15 @@ import 'package:stowage_plan/models/container/container.dart';
 class Container1AA implements Container {
   final double _tareWeight;
   final double _cargoWeight;
+  //
+  @override
+  final int id;
   ///
   /// Creates 40 ft container with standard height.
   /// Gross weight of container is calculated
   /// as the sum of [tareWeight] (tons) and [cargoWeight] (tons).
   const Container1AA({
+    required this.id,
     double tareWeight = 0.0,
     double cargoWeight = 0.0,
   })  : _tareWeight = tareWeight,
