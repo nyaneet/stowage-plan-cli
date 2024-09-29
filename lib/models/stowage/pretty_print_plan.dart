@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:stowage_plan/models/stowage/slot.dart';
 import 'package:stowage_plan/models/stowage/stowage_plan.dart';
 ///
-/// Provides an extension method for pretty-printing a [StowagePlan].
+/// Provides an extension methods for pretty-printing a [StowagePlan].
 extension PrettyPrint on StowagePlan {
   static const String _nullSlot = '    ';
   static const String _occupiedSlot = '[▥] ';
@@ -10,37 +10,50 @@ extension PrettyPrint on StowagePlan {
   static const String _rowNumbersPad = '   ';
   ///
   /// Prints a textual representation of the stowage plan
-  /// for all bays.
-  void printAll() {
-    for (int bay in _bayIterator()) {
-      printBay(bay);
+  /// for all bays. If [usePairs] is `true`, the method prints the stowage plan for pairs of adjacent
+  /// odd and even bays. Otherwise, it prints the stowage plan for each bay individually.
+  void printAll({bool usePairs = true}) {
+    if (usePairs) {
+      for (final group in _iterateBayPairs()) {
+        _printBayPair(group.odd, group.even);
+      }
+    } else {
+      for (int bay in _iterateBays()) {
+        _printBayPair(bay, null);
+      }
     }
   }
   ///
-  /// Prints a textual representation of the stowage plan
-  /// for a specific [bay] to the console.
-  void printBay(int bay) {
-    final slotsInBay = toFilteredSlotList(bay: bay);
-    if (slotsInBay.isEmpty) {
-      print('No slots found for bay $bay');
+  /// Prints a textual representation of the stowage plan for a specific pair of bays,
+  /// including bay, row and tier numbers.
+  ///
+  /// The [oddBay] and [evenBay] parameters specify the pair of bays for which plan should be printed.
+  /// If [oddBay] or [evenBay] is null, plan for a single bay is printed instead.
+  void _printBayPair(int? oddBay, int? evenBay) {
+    final slotsInBayPair = toFilteredSlotList(
+      shouldIncludeSlot: (slot) => slot.bay == oddBay || slot.bay == evenBay,
+    );
+    final bayPairTitle =
+        'BAY No. ${oddBay != null ? oddBay.toString().padLeft(2, '0') : ''}${evenBay != null ? '(${evenBay.toString().padLeft(2, '0')})' : ''}';
+    if (slotsInBayPair.isEmpty) {
+      print('No slots found for $bayPairTitle');
       return;
     }
-    print('Bay $bay:');
-    final maxRow = slotsInBay.map((slot) => slot.row).reduce(
-          (a, b) => a > b ? a : b,
-        );
-    final withZeroRow = slotsInBay.any((slot) => slot.row == 0);
-    final maxTier = slotsInBay.map((slot) => slot.tier).reduce(
-          (a, b) => a > b ? a : b,
-        );
-    for (int tier in _tierIterator(maxTier)) {
+    print(bayPairTitle);
+    final maxRow = slotsInBayPair.map((slot) => slot.row).max;
+    final withZeroRow = slotsInBayPair.any((slot) => slot.row == 0);
+    final maxTier = slotsInBayPair.map((slot) => slot.tier).max;
+    for (int tier in _iterateTiers(maxTier)) {
       final String tierNumber = tier.toString().padLeft(2, '0');
       String slotsLine = '';
-      for (int row in _rowIterator(maxRow, withZeroRow)) {
-        final slot = slotsInBay.firstWhereOrNull(
+      for (int row in _iterateRows(maxRow, withZeroRow)) {
+        final slots = slotsInBayPair.where(
           (s) => s.row == row && s.tier == tier,
         );
-        switch (slot) {
+        Slot? slotForDisplay =
+            slots.firstWhereOrNull((s) => s.containerId != null) ??
+                slots.firstOrNull;
+        switch (slotForDisplay) {
           case null:
             slotsLine += _nullSlot;
             break;
@@ -55,7 +68,7 @@ extension PrettyPrint on StowagePlan {
       if (slotsLine.trim().isNotEmpty) print('$tierNumber $slotsLine');
     }
     String rowNumbers = _rowNumbersPad;
-    for (int row in _rowIterator(maxRow, withZeroRow)) {
+    for (int row in _iterateRows(maxRow, withZeroRow)) {
       rowNumbers += ' ${row.toString().padLeft(2, '0')} ';
     }
     print(rowNumbers);
@@ -63,37 +76,16 @@ extension PrettyPrint on StowagePlan {
   ///
   /// Returns [Iterable] collection of unique bay numbers
   /// present in the stowage plan, sorted in descending order.
-  Iterable<int> _bayIterator() {
+  Iterable<int> _iterateBays() {
     final uniqueBays = toFilteredSlotList().map((slot) => slot.bay).toSet();
     final sortedBays = uniqueBays.toList()..sort((a, b) => b.compareTo(a));
     return sortedBays;
   }
   ///
-  /// Returns [Iterable] collection of non-overlapping pairs of bay numbers
-  /// present in the stowage plan, in descending order.
-  ///
-  /// Each element of the collection is a record that may contain:
-  /// - an odd bay number (`odd`) and the even bay number that immediately precedes it (`even`),
-  /// - only an odd bay number (`odd`) if no preceding even bay number exists,
-  /// - only an even bay number (`even`) if no following odd bay number exists.
-  Iterable<({int? odd, int? even})> bayPairsIterator() sync* {
-    final bays = _bayIterator().toList();
-    for (int i = 0; i < bays.length; i++) {
-      final current = bays[i];
-      final next = bays.elementAtOrNull(i + 1);
-      if (next != null && current.isOdd && current == next + 1) {
-        yield (odd: current, even: next);
-        i++;
-      } else {
-        yield (odd: current, even: null);
-      }
-    }
-  }
-  ///
   /// Returns [Iterable] collection of row numbers
   /// in accordance with stowage numbering system for rows
   /// [ISO 9711-1, 3.2](https://www.iso.org/ru/standard/17568.html)
-  Iterable<int> _rowIterator(int maxRow, bool withZeroRow) sync* {
+  Iterable<int> _iterateRows(int maxRow, bool withZeroRow) sync* {
     for (int row = maxRow; row >= 2; row -= 2) {
       yield row;
     }
@@ -106,9 +98,30 @@ extension PrettyPrint on StowagePlan {
   /// Returns [Iterable] collection of tier numbers
   /// in accordance with stowage numbering system for rows
   /// [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
-  Iterable<int> _tierIterator(int maxTier) sync* {
+  Iterable<int> _iterateTiers(int maxTier) sync* {
     for (int tier = maxTier; tier >= 2; tier -= 2) {
       yield tier;
+    }
+  }
+  ///
+  /// Returns [Iterable] collection of non-overlapping pairs of bay numbers
+  /// present in the stowage plan, in descending order.
+  ///
+  /// Each element of the collection is a record that may contain:
+  /// - an odd bay number (`odd`) and the even bay number that immediately precedes it (`even`),
+  /// - only an odd bay number (`odd`) if no preceding even bay number exists,
+  /// - only an even bay number (`even`) if no following odd bay number exists.
+  Iterable<({int? odd, int? even})> _iterateBayPairs() sync* {
+    final bays = _iterateBays().toList();
+    for (int i = 0; i < bays.length; i++) {
+      final current = bays[i];
+      final next = bays.elementAtOrNull(i + 1);
+      if (next != null && current.isOdd && current == next + 1) {
+        yield (odd: current, even: next);
+        i++;
+      } else {
+        yield (odd: current, even: null);
+      }
     }
   }
 }
