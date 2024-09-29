@@ -15,16 +15,23 @@ abstract interface class StowagePlan {
     int tier,
   );
   ///
-  /// Returns a list of all stowage slots in this plan,
-  /// optionally filtered by the given [bay], [row], and [tier] numbers.
+  /// Returns a list of stowage slots filtered by the specified criteria.
   ///
   /// If any of the [bay], [row], or [tier] parameters are provided,
-  /// only slots matching those criteria will be included in the returned list.
-  /// If none of these parameters are provided, all slots in the plan will be returned.
+  /// only slots matching those criteria will be included in the returned list
+  /// or passed to the [shouldIncludeSlot] callback.
+  /// Otherwise, all slots will be included or passed to the [shouldIncludeSlot] callback.
+  ///
+  /// The optional [shouldIncludeSlot] parameter can be used to filter slots
+  /// after filtering by [bay], [row], and [tier] numbers.
+  /// If [shouldIncludeSlot] callback is provided it must return `true` for slots
+  /// that should be included in the returned list
+  /// and `false` for slots that should be excluded.
   List<Slot> toFilteredSlotList({
     int? bay,
     int? row,
     int? tier,
+    bool Function(Slot slot)? shouldIncludeSlot,
   });
   ///
   /// Adds the given [container] to stowage slot at specified position.

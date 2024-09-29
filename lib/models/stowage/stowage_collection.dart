@@ -48,11 +48,13 @@ class StowageCollection implements StowagePlan {
     int? bay,
     int? row,
     int? tier,
+    bool Function(Slot slot)? shouldIncludeSlot,
   }) =>
       _slots.values.where((slot) {
         if (bay != null && slot.bay != bay) return false;
         if (row != null && slot.row != row) return false;
         if (tier != null && slot.tier != tier) return false;
+        if (shouldIncludeSlot?.call(slot) == false) return false;
         return true;
       }).toList();
   //
