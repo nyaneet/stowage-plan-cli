@@ -5,7 +5,7 @@ import 'package:stowage_plan/models/stowage/stowage_plan.dart';
 /// Provides an extension method for pretty-printing a [StowagePlan].
 extension PrettyPrint on StowagePlan {
   static const String _nullSlot = '    ';
-  static const String _occupiedSlot = '[■] ';
+  static const String _occupiedSlot = '[▥] ';
   static const String _emptySlot = '[ ] ';
   static const String _rowNumbersPad = '   ';
   ///
@@ -67,6 +67,27 @@ extension PrettyPrint on StowagePlan {
     final uniqueBays = toFilteredSlotList().map((slot) => slot.bay).toSet();
     final sortedBays = uniqueBays.toList()..sort((a, b) => b.compareTo(a));
     return sortedBays;
+  }
+  ///
+  /// Returns [Iterable] collection of non-overlapping pairs of bay numbers
+  /// present in the stowage plan, in descending order.
+  ///
+  /// Each element of the collection is a record that may contain:
+  /// - an odd bay number (`odd`) and the even bay number that immediately precedes it (`even`),
+  /// - only an odd bay number (`odd`) if no preceding even bay number exists,
+  /// - only an even bay number (`even`) if no following odd bay number exists.
+  Iterable<({int? odd, int? even})> bayPairsIterator() sync* {
+    final bays = _bayIterator().toList();
+    for (int i = 0; i < bays.length; i++) {
+      final current = bays[i];
+      final next = bays.elementAtOrNull(i + 1);
+      if (next != null && current.isOdd && current == next + 1) {
+        yield (odd: current, even: next);
+        i++;
+      } else {
+        yield (odd: current, even: null);
+      }
+    }
   }
   ///
   /// Returns [Iterable] collection of row numbers
