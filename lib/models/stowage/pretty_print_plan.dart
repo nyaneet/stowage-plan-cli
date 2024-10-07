@@ -108,7 +108,7 @@ extension PrettyPrint on StowagePlan {
   /// present in the stowage plan, in descending order.
   ///
   /// Each element of the collection is a record that may contain:
-  /// - an odd bay number (`odd`) and the even bay number that immediately precedes it (`even`),
+  /// - an odd bay number (`odd`) and the even bay number (`even`) that immediately precedes it,
   /// - only an odd bay number (`odd`) if no preceding even bay number exists,
   /// - only an even bay number (`even`) if no following odd bay number exists.
   Iterable<({int? odd, int? even})> _iterateBayPairs() sync* {
@@ -120,7 +120,10 @@ extension PrettyPrint on StowagePlan {
         yield (odd: current, even: next);
         i++;
       } else {
-        yield (odd: current, even: null);
+        yield (
+          odd: current.isOdd ? current : null,
+          even: current.isEven ? current : null,
+        );
       }
     }
   }
