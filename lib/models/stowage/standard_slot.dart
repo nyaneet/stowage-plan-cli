@@ -72,12 +72,19 @@ class StandardSlot implements Slot {
     final rightZUpper = leftZUpper + _standardHeight;
     if (tierSeparation < minVerticalSeparation) return null;
     if (rightZUpper > maxHeight) return null;
-    return copyWith(
-      containerId: null,
+    return StandardSlot(
+      bay: bay,
+      row: row,
       tier: tierUpper,
+      leftX: leftX,
+      rightX: rightX,
+      leftY: leftY,
+      rightY: rightY,
       leftZ: leftZUpper,
       rightZ: rightZUpper,
+      maxHeight: maxHeight,
       minVerticalSeparation: minVerticalSeparation,
+      containerId: null,
     );
   }
   //
@@ -86,51 +93,58 @@ class StandardSlot implements Slot {
     if (containerId != null) return null;
     final rightZAdjusted = leftZ + container.height / 1000;
     if (rightZAdjusted > maxHeight) return null;
-    return copyWith(
-      containerId: container.id,
+    return StandardSlot(
+      bay: bay,
+      row: row,
+      tier: tier,
+      leftX: leftX,
+      rightX: rightX,
+      leftY: leftY,
+      rightY: rightY,
+      leftZ: leftZ,
       rightZ: rightZAdjusted,
+      maxHeight: maxHeight,
+      minVerticalSeparation: minVerticalSeparation,
+      containerId: container.id,
     );
   }
   //
   @override
   Slot? empty() {
     if (containerId == null) return null;
-    return copyWith(
+    return StandardSlot(
+      bay: bay,
+      row: row,
+      tier: tier,
+      leftX: leftX,
+      rightX: rightX,
+      leftY: leftY,
+      rightY: rightY,
+      leftZ: leftZ,
+      rightZ: rightZ,
+      maxHeight: maxHeight,
+      minVerticalSeparation: minVerticalSeparation,
       containerId: null,
     );
   }
   //
   @override
-  Slot copyWith({
-    int? bay,
-    int? row,
-    int? tier,
-    double? leftX,
-    double? rightX,
-    double? leftY,
-    double? rightY,
-    double? leftZ,
-    double? rightZ,
-    double? maxHeight,
-    double? minVerticalSeparation,
-    required int? containerId,
-  }) =>
-      StandardSlot(
-        bay: bay ?? this.bay,
-        row: row ?? this.row,
-        tier: tier ?? this.tier,
-        leftX: leftX ?? this.leftX,
-        rightX: rightX ?? this.rightX,
-        leftY: leftY ?? this.leftY,
-        rightY: rightY ?? this.rightY,
-        leftZ: leftZ ?? this.leftZ,
-        rightZ: rightZ ?? this.rightZ,
-        maxHeight: maxHeight ?? this.maxHeight,
-        minVerticalSeparation:
-            minVerticalSeparation ?? this.minVerticalSeparation,
+  Slot copy() => StandardSlot(
+        bay: bay,
+        row: row,
+        tier: tier,
+        leftX: leftX,
+        rightX: rightX,
+        leftY: leftY,
+        rightY: rightY,
+        leftZ: leftZ,
+        rightZ: rightZ,
+        maxHeight: maxHeight,
+        minVerticalSeparation: minVerticalSeparation,
         containerId: containerId,
       );
   //
   @override
-  String toString() => 'Installed container: $containerId';
+  String toString() =>
+      'Key: ${'$bay'.padLeft(2, '0')}${'$row'.padLeft(2, '0')}${'$tier'.padLeft(2, '0')}\nInstalled container: $containerId';
 }

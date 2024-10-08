@@ -30,12 +30,13 @@ class StowageMap implements StowageCollection {
   /// Creates stowage plan from list of [slots].
   ///
   /// Copies of given [slots] are used to create stowage plan.
-  factory StowageMap.fromSlotList(List<Slot> slots) => StowageMap._(
-        Map.fromEntries(slots.map((slot) => MapEntry(
+  factory StowageMap.fromSlotList(List<Slot> slots) =>
+      StowageMap._(Map.fromEntries(
+        slots.map((slot) => MapEntry(
               _SlotKey.fromSlot(slot).value(),
-              slot.copyWith(containerId: slot.containerId),
-            ))),
-      );
+              slot.copy(),
+            )),
+      ));
   //
   @override
   Slot? findSlot(

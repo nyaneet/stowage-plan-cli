@@ -79,9 +79,6 @@ abstract interface class Slot {
   /// returns `null`.
   Slot? empty();
   ///
-  /// Creates and returns a copy of this stowage slot with the given fields
-  /// replaced by the non-null parameter values.
-  ///
-  /// The [containerId] value is always replaced, even if it is `null`.
-  Slot copyWith({required int? containerId});
+  /// Creates and returns a copy of this stowage slot.
+  Slot copy();
 }
