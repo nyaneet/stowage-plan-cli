@@ -1,4 +1,3 @@
-import 'package:stowage_plan/models/container/container.dart';
 import 'package:stowage_plan/models/stowage/slot.dart';
 ///
 /// Structure to store simple representation of stowage plan,
@@ -32,33 +31,6 @@ abstract interface class StowageCollection {
     int? row,
     int? tier,
     bool Function(Slot slot)? shouldIncludeSlot,
-  });
-  ///
-  /// Adds the given [container] to stowage slot at specified position.
-  ///
-  /// The [bay], [row], and [tier] parameters specify location of slot.
-  ///
-  /// If container is added, new slot for next tier is created
-  /// and added to the plan, if possible (e.g., new slot does not exceed
-  /// its maximum height).
-  void addContainer(
-    Container container, {
-    required int bay,
-    required int row,
-    required int tier,
-  });
-  ///
-  /// Removes container from stowage slot at specified position.
-  ///
-  /// The [bay], [row], and [tier] parameters specify location of slot.
-  ///
-  /// If container is removed and specified slot is the uppermost existing slot
-  /// in its hold or deck, then this slot and all empty slots below it,
-  /// except for the lowest one, are removed from the stowage plan.
-  void removeContainer({
-    required int bay,
-    required int row,
-    required int tier,
   });
   ///
   /// Adds a slot with the same properties as the given [slot]
