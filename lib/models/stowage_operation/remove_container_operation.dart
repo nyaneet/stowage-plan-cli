@@ -1,3 +1,5 @@
+import 'package:stowage_plan/core/failure.dart';
+import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
@@ -35,12 +37,22 @@ class RemoveContainerOperation implements StowageOperation {
   /// in its hold or deck, then this slot and all empty slots below it,
   /// except the lowest one, are removed from the stowage plan.
   @override
-  void execute(StowageCollection stowageCollection) {
+  ResultF<void> execute(StowageCollection stowageCollection) {
     // Remove container form specified slot
     final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
-    if (existingSlot == null) return;
+    if (existingSlot == null) {
+      return Err(Failure(
+        message: 'Slot not found',
+        stackTrace: StackTrace.current,
+      ));
+    }
     final updatedSlot = existingSlot.empty();
-    if (updatedSlot == null) return;
+    if (updatedSlot == null) {
+      return Err(Failure(
+        message: 'Slot already empty',
+        stackTrace: StackTrace.current,
+      ));
+    }
     stowageCollection.addSlot(updatedSlot);
     // Clear all slots above which there are no occupied slots
     // within the hold or deck except the last one
@@ -60,5 +72,6 @@ class RemoveContainerOperation implements StowageOperation {
         );
       }
     }
+    return const Ok(null);
   }
 }

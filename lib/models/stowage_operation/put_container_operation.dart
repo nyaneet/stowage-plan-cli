@@ -1,3 +1,5 @@
+import 'package:stowage_plan/core/failure.dart';
+import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/container/container.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
@@ -34,16 +36,32 @@ class PutContainerOperation implements StowageOperation {
   /// and added to the plan, if possible (e.g., new slot does not exceed
   /// its maximum height).
   @override
-  void execute(StowageCollection stowageCollection) {
+  ResultF<void> execute(StowageCollection stowageCollection) {
     // Find and update specified slot if exists
     final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
-    if (existingSlot == null) return;
+    if (existingSlot == null) {
+      return Err(Failure(
+        message: 'Slot not found',
+        stackTrace: StackTrace.current,
+      ));
+    }
     final updatedSlot = existingSlot.withContainer(_container);
-    if (updatedSlot == null) return;
+    if (updatedSlot == null) {
+      return Err(Failure(
+        message: 'Slot already occupied',
+        stackTrace: StackTrace.current,
+      ));
+    }
     stowageCollection.addSlot(updatedSlot);
     // Add new slot for upper tier if possible
     final upperSlot = updatedSlot.createUpperSlot();
-    if (upperSlot == null) return;
+    if (upperSlot == null) {
+      return Err(Failure(
+        message: 'Cannot create upper slot, it exceeds maximum height',
+        stackTrace: StackTrace.current,
+      ));
+    }
     stowageCollection.addSlot(upperSlot);
+    return Ok(null);
   }
 }
