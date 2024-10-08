@@ -1,3 +1,6 @@
+import 'package:stowage_plan/core/failure.dart';
+import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
 import 'package:test/test.dart';
 void main() {
@@ -7,7 +10,7 @@ void main() {
     () {
       //
       test(
-        'returns a new slot without container',
+        'returns [Ok] with new empty slot',
         () {
           final slotWithContainer = StandardSlot(
             bay: 1,
@@ -23,14 +26,15 @@ void main() {
             minVerticalSeparation: 0.5,
             containerId: 1,
           );
-          final emptySlot = slotWithContainer.empty();
+          final result = slotWithContainer.empty();
           expect(
-            emptySlot,
-            isNotNull,
-            reason: 'Should return a new slot',
+            result,
+            isA<Ok<Slot, Failure>>(),
+            reason: 'Should return [Ok] with a new slot',
           );
+          final emptySlot = (result as Ok<Slot, Failure>).value;
           expect(
-            emptySlot!.containerId,
+            emptySlot.containerId,
             isNull,
             reason: 'Container ID should be null',
           );
@@ -38,7 +42,7 @@ void main() {
       );
       //
       test(
-        'returns null if slot is already empty',
+        'returns [Err] if slot is already empty',
         () {
           final emptySlot = StandardSlot(
             bay: 1,
@@ -56,8 +60,8 @@ void main() {
           final result = emptySlot.empty();
           expect(
             result,
-            isNull,
-            reason: 'Should return null if slot is already empty',
+            isA<Err<Slot, Failure>>(),
+            reason: 'Should return [Err]',
           );
         },
       );
@@ -79,9 +83,15 @@ void main() {
             minVerticalSeparation: 0.5,
             containerId: 1,
           );
-          final emptySlot = slotWithContainer.empty();
+          final result = slotWithContainer.empty();
           expect(
-            emptySlot!.bay,
+            result,
+            isA<Ok<Slot, Failure>>(),
+            reason: 'Should return [Ok] with a new slot',
+          );
+          final emptySlot = (result as Ok<Slot, Failure>).value;
+          expect(
+            emptySlot.bay,
             1,
             reason: 'bay should not be changed',
           );

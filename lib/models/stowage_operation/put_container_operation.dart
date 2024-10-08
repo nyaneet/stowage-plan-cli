@@ -1,5 +1,7 @@
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/core/result_extension.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/container/container.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
@@ -19,7 +21,7 @@ class PutContainerOperation implements StowageOperation {
   /// Creates operation that puts the given [container] to stowage slot
   /// at specified position.
   ///
-  /// The [bay], [row], and [tier] parameters specify location of slot.
+  /// The [bay], [row] and [tier] numbers specify location of slot.
   const PutContainerOperation({
     required Container container,
     required int bay,
@@ -40,31 +42,42 @@ class PutContainerOperation implements StowageOperation {
   /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
-    // Find and update specified slot if exists
-    final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
+    return _findSlot(_bay, _row, _tier, stowageCollection).bind(
+      (slot) {
+        return slot.withContainer(_container);
+      },
+    ).map(
+      (existingSlot) {
+        stowageCollection.addSlot(existingSlot);
+        return existingSlot;
+      },
+    ).bind(
+      (slotWithContainer) {
+        return slotWithContainer.createUpperSlot();
+      },
+    ).map(
+      (upperSlot) {
+        stowageCollection.addSlot(upperSlot);
+      },
+    );
+  }
+  ///
+  /// Find slot in specified position.
+  ///
+  /// Returns [Ok] with slot if found, and [Err] otherwise.
+  ResultF<Slot> _findSlot(
+    int bay,
+    int row,
+    int tier,
+    StowageCollection stowageCollection,
+  ) {
+    final existingSlot = stowageCollection.findSlot(bay, row, tier);
     if (existingSlot == null) {
       return Err(Failure(
-        message: 'Slot not found',
+        message: 'Slot to put container not found',
         stackTrace: StackTrace.current,
       ));
     }
-    final updatedSlot = existingSlot.withContainer(_container);
-    if (updatedSlot == null) {
-      return Err(Failure(
-        message: 'Slot already occupied',
-        stackTrace: StackTrace.current,
-      ));
-    }
-    stowageCollection.addSlot(updatedSlot);
-    // Add new slot for upper tier if possible
-    final upperSlot = updatedSlot.createUpperSlot();
-    if (upperSlot == null) {
-      return Err(Failure(
-        message: 'Cannot create upper slot, it exceeds maximum height',
-        stackTrace: StackTrace.current,
-      ));
-    }
-    stowageCollection.addSlot(upperSlot);
-    return Ok(null);
+    return Ok(existingSlot);
   }
 }
