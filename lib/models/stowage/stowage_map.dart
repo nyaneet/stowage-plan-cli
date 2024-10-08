@@ -9,13 +9,13 @@ import 'package:stowage_plan/models/stowage/slot.dart';
 /// Each value of [Map] is a [Slot] of stowage plan.
 class StowageMap implements StowageCollection {
   ///
-  /// Minimal possible tier number for hold.
+  /// Minimum possible tier number for hold.
   static const int _baseHoldTier = 2;
   ///
-  /// Minimal possible tier number for deck.
+  /// Minimum possible tier number for deck.
   static const int _baseDeckTier = 80;
   ///
-  /// Maximal possible tier number.
+  /// Maximum possible tier number.
   static const int _maxTier = 99;
   ///
   /// [Map] that used to store stowage slots of plan.
@@ -44,7 +44,7 @@ class StowageMap implements StowageCollection {
     int row,
     int tier,
   ) =>
-      _plan[_SlotKey(bay, row, tier).value()];
+      _plan[_SlotKey(bay, row, tier).value()]?.copy();
   //
   @override
   List<Slot> toFilteredSlotList({
@@ -53,13 +53,16 @@ class StowageMap implements StowageCollection {
     int? tier,
     bool Function(Slot slot)? shouldIncludeSlot,
   }) =>
-      _plan.values.where((slot) {
-        if (bay != null && slot.bay != bay) return false;
-        if (row != null && slot.row != row) return false;
-        if (tier != null && slot.tier != tier) return false;
-        if (shouldIncludeSlot?.call(slot) == false) return false;
-        return true;
-      }).toList();
+      _plan.values
+          .where((slot) {
+            if (bay != null && slot.bay != bay) return false;
+            if (row != null && slot.row != row) return false;
+            if (tier != null && slot.tier != tier) return false;
+            if (shouldIncludeSlot?.call(slot) == false) return false;
+            return true;
+          })
+          .map((slot) => slot.copy())
+          .toList();
   //
   @override
   void addContainer(
@@ -73,11 +76,11 @@ class StowageMap implements StowageCollection {
     if (existingSlot == null) return;
     final updatedSlot = existingSlot.withContainer(container);
     if (updatedSlot == null) return;
-    _plan[_SlotKey.fromSlot(updatedSlot).value()] = updatedSlot;
+    addSlot(updatedSlot);
     // Add new slot for next tier if possible
     final upperSlot = updatedSlot.createUpperSlot();
     if (upperSlot == null) return;
-    _plan[_SlotKey.fromSlot(upperSlot).value()] = upperSlot;
+    addSlot(upperSlot);
   }
   //
   @override
@@ -91,7 +94,7 @@ class StowageMap implements StowageCollection {
     if (existingSlot == null) return;
     final updatedSlot = existingSlot.empty();
     if (updatedSlot == null) return;
-    _plan[_SlotKey.fromSlot(updatedSlot).value()] = updatedSlot;
+    addSlot(updatedSlot);
     // Clear all slots above which there are no occupied slots
     // within the hold or deck except for the last one
     final maxTier =
@@ -103,9 +106,31 @@ class StowageMap implements StowageCollection {
       if (currentSlot?.containerId != null) break;
       final belowSlot = findSlot(bay, row, currentTier - 2);
       if (belowSlot?.containerId == null && currentSlot != null) {
-        _plan.remove(_SlotKey.fromSlot(currentSlot).value());
+        removeSlot(bay, row, tier);
       }
     }
+  }
+  //
+  @override
+  void addSlot(Slot slot) {
+    _plan[_SlotKey.fromSlot(slot).value()] = slot.copy();
+  }
+  //
+  @override
+  void addAllSlots(List<Slot> slots) {
+    for (final slot in slots) {
+      addSlot(slot);
+    }
+  }
+  //
+  @override
+  void removeSlot(int bay, int row, int tier) {
+    _plan.remove(_SlotKey(bay, row, tier).value());
+  }
+  //
+  @override
+  void removeAllSlots() {
+    _plan.clear();
   }
   //
   @override

@@ -60,4 +60,29 @@ abstract interface class StowageCollection {
     required int row,
     required int tier,
   });
+  ///
+  /// Adds a slot with the same properties as the given [slot]
+  /// to stowage collection at its position specified
+  /// by [bay], [row], and [tier] numbers.
+  ///
+  /// If slot is already in the collection (slot with the same
+  /// [bay], [row], and [tier] numbers),
+  /// its value will be overwritten.
+  void addSlot(Slot slot);
+  ///
+  /// Adds new slots with the same properties as the given [slots]
+  /// to stowage collection at positions specified by
+  /// [bay], [row], and [tier] numbers of each slot.
+  ///
+  /// If any of given slots is already in the collection
+  /// (slot with the same [bay], [row], and [tier] numbers),
+  /// its value will be overwritten.
+  void addAllSlots(List<Slot> slots);
+  ///
+  /// Removes slot from stowage collection, if presents,
+  /// at position specified by [bay], [row], and [tier] numbers.
+  void removeSlot(int bay, int row, int tier);
+  ///
+  /// Removes all slots from stowage collection.
+  void removeAllSlots();
 }

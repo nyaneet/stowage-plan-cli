@@ -47,7 +47,7 @@ abstract interface class Slot {
   /// along the vertical axis, measured in m.
   double get maxHeight;
   ///
-  /// Minimal allowed vertical distance to next stowage slot in the tier above,
+  /// Minimum allowed vertical distance to next stowage slot in the tier above,
   /// measured in m.
   double get minVerticalSeparation;
   ///
