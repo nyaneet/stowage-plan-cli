@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:stowage_plan/models/stowage/slot.dart';
-import 'package:stowage_plan/models/stowage/stowage_plan.dart';
+import 'package:stowage_plan/models/stowage/stowage_collection.dart';
 ///
-/// Provides an extension methods for pretty-printing a [StowagePlan].
-extension PrettyPrint on StowagePlan {
+/// Provides an extension methods for pretty-printing a [StowageCollection].
+extension PrettyPrint on StowageCollection {
   static const String _nullSlot = '    ';
   static const String _occupiedSlot = '[▥] ';
   static const String _emptySlot = '[ ] ';
