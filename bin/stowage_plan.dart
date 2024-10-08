@@ -1,9 +1,9 @@
 import 'package:stowage_plan/main.dart';
 import 'package:stowage_plan/models/container/container_1cc.dart';
-import 'package:stowage_plan/models/operation/put_container_operation.dart';
-import 'package:stowage_plan/models/operation/remove_container_operation.dart';
-import 'package:stowage_plan/models/stowage/stowage_map.dart';
-import 'package:stowage_plan/models/stowage/pretty_print_plan.dart';
+import 'package:stowage_plan/models/stowage_operation/put_container_operation.dart';
+import 'package:stowage_plan/models/stowage_operation/remove_container_operation.dart';
+import 'package:stowage_plan/models/stowage_collection/stowage_map.dart';
+import 'package:stowage_plan/models/stowage_collection/pretty_print_plan.dart';
 void main(List<String> arguments) {
   final plan = StowageMap.fromSlotList(
     arkSlotOrigins,

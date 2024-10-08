@@ -1,4 +1,4 @@
-import 'package:stowage_plan/models/stowage/stowage_collection.dart';
+import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
 /// Operation to execute with stowage collection.
 abstract interface class StowageOperation {

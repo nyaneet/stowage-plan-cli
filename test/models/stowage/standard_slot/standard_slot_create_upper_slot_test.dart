@@ -1,4 +1,4 @@
-import 'package:stowage_plan/models/stowage/standard_slot.dart';
+import 'package:stowage_plan/models/slot/standard_slot.dart';
 import 'package:test/test.dart';
 void main() {
   //

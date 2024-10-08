@@ -1,5 +1,5 @@
 import 'package:stowage_plan/models/container/container.dart';
-import 'package:stowage_plan/models/stowage/slot.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 ///
 /// A stowage slot with standard height
 /// that is always separated from slot of next tier

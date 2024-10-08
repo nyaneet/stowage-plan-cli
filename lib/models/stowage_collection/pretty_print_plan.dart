@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:stowage_plan/models/stowage/slot.dart';
-import 'package:stowage_plan/models/stowage/stowage_collection.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
+import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
 /// Provides an extension methods for pretty-printing a [StowageCollection].
 extension PrettyPrint on StowageCollection {

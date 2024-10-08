@@ -1,4 +1,4 @@
-import 'package:stowage_plan/models/stowage/slot.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 ///
 /// Structure to store simple representation of stowage plan,
 /// in accordance with [ISO 9711-1](https://www.iso.org/ru/standard/17568.html)

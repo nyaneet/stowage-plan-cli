@@ -1,5 +1,5 @@
-import 'package:stowage_plan/models/stowage/slot.dart';
-import 'package:stowage_plan/models/stowage/standard_slot.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
+import 'package:stowage_plan/models/slot/standard_slot.dart';
 const List<Slot> arkSlotOrigins = [
   StandardSlot(
     bay: 1,

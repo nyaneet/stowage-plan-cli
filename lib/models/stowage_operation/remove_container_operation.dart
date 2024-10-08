@@ -1,5 +1,5 @@
-import 'package:stowage_plan/models/operation/stowage_operation.dart';
-import 'package:stowage_plan/models/stowage/stowage_collection.dart';
+import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
+import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
 /// Operation that removes container from stowage slot
 /// at specified position.

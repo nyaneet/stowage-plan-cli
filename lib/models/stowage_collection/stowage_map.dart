@@ -1,5 +1,5 @@
-import 'package:stowage_plan/models/stowage/stowage_collection.dart';
-import 'package:stowage_plan/models/stowage/slot.dart';
+import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 ///
 /// [StowageCollection] that uses [Map] to store stowage plan.
 ///
