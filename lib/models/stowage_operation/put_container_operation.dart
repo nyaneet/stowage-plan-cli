@@ -33,8 +33,11 @@ class PutContainerOperation implements StowageOperation {
   /// Puts container to slot at specified position in [stowageCollection].
   ///
   /// If container is added, new slot for upper tier is created
-  /// and added to the plan, if possible (e.g., new slot does not exceed
+  /// and added to [stowageCollection], if possible (e.g., new slot does not exceed
   /// its maximum height).
+  ///
+  /// Returns [Ok] if container successfully added to [stowageCollection],
+  /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
     // Find and update specified slot if exists

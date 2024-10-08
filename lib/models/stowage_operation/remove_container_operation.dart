@@ -36,6 +36,9 @@ class RemoveContainerOperation implements StowageOperation {
   /// If container is removed and specified slot is the uppermost existing slot
   /// in its hold or deck, then this slot and all empty slots below it,
   /// except the lowest one, are removed from the stowage plan.
+  ///
+  /// Returns [Ok] if container successfully removed from [stowageCollection],
+  /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
     // Remove container form specified slot
