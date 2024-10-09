@@ -1,3 +1,5 @@
+import 'package:stowage_plan/core/failure.dart';
+import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/container/container.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 ///
@@ -65,14 +67,24 @@ class StandardSlot implements Slot {
   });
   //
   @override
-  Slot? createUpperSlot({double? verticalSeparation}) {
+  ResultF<Slot> createUpperSlot({double? verticalSeparation}) {
     final tierUpper = tier + 2;
     final tierSeparation = verticalSeparation ?? minVerticalSeparation;
     final leftZUpper = rightZ + tierSeparation;
     final rightZUpper = leftZUpper + _standardHeight;
-    if (tierSeparation < minVerticalSeparation) return null;
-    if (rightZUpper > maxHeight) return null;
-    return StandardSlot(
+    if (tierSeparation < minVerticalSeparation) {
+      return Err(Failure(
+        message: 'Tier separation must be at least $minVerticalSeparation m.',
+        stackTrace: StackTrace.current,
+      ));
+    }
+    if (rightZUpper > maxHeight) {
+      return Err(Failure(
+        message: 'Slot must not exceed $maxHeight m.',
+        stackTrace: StackTrace.current,
+      ));
+    }
+    return Ok(StandardSlot(
       bay: bay,
       row: row,
       tier: tierUpper,
@@ -85,15 +97,25 @@ class StandardSlot implements Slot {
       maxHeight: maxHeight,
       minVerticalSeparation: minVerticalSeparation,
       containerId: null,
-    );
+    ));
   }
   //
   @override
-  Slot? withContainer(Container container) {
-    if (containerId != null) return null;
+  ResultF<Slot> withContainer(Container container) {
+    if (containerId != null) {
+      return Err(Failure(
+        message: 'Slot already occupied',
+        stackTrace: StackTrace.current,
+      ));
+    }
     final rightZAdjusted = leftZ + container.height / 1000;
-    if (rightZAdjusted > maxHeight) return null;
-    return StandardSlot(
+    if (rightZAdjusted > maxHeight) {
+      return Err(Failure(
+        message: 'Slot with container must not exceed $maxHeight m.',
+        stackTrace: StackTrace.current,
+      ));
+    }
+    return Ok(StandardSlot(
       bay: bay,
       row: row,
       tier: tier,
@@ -106,13 +128,18 @@ class StandardSlot implements Slot {
       maxHeight: maxHeight,
       minVerticalSeparation: minVerticalSeparation,
       containerId: container.id,
-    );
+    ));
   }
   //
   @override
-  Slot? empty() {
-    if (containerId == null) return null;
-    return StandardSlot(
+  ResultF<Slot> empty() {
+    if (containerId == null) {
+      return Err(Failure(
+        message: 'Slot already empty',
+        stackTrace: StackTrace.current,
+      ));
+    }
+    return Ok(StandardSlot(
       bay: bay,
       row: row,
       tier: tier,
@@ -125,7 +152,7 @@ class StandardSlot implements Slot {
       maxHeight: maxHeight,
       minVerticalSeparation: minVerticalSeparation,
       containerId: null,
-    );
+    ));
   }
   //
   @override

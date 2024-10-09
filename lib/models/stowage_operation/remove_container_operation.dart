@@ -1,5 +1,6 @@
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
@@ -41,28 +42,35 @@ class RemoveContainerOperation implements StowageOperation {
   /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
-    // Remove container form specified slot
     final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
-    if (existingSlot == null) {
-      return Err(Failure(
-        message: 'Slot not found',
-        stackTrace: StackTrace.current,
-      ));
+    switch (existingSlot) {
+      case final Slot existingSlot:
+        final updatedSlot = existingSlot.empty();
+        switch (updatedSlot) {
+          case Ok(value: final updatedSlot):
+            stowageCollection.addSlot(updatedSlot);
+            _clearDanglingSlots(updatedSlot, stowageCollection);
+            return Ok(null);
+          case Err(:final error):
+            return Err(error);
+        }
+      case null:
+        return Err(Failure(
+          message: 'Slot not found',
+          stackTrace: StackTrace.current,
+        ));
     }
-    final updatedSlot = existingSlot.empty();
-    if (updatedSlot == null) {
-      return Err(Failure(
-        message: 'Slot already empty',
-        stackTrace: StackTrace.current,
-      ));
-    }
-    stowageCollection.addSlot(updatedSlot);
-    // Clear all slots above which there are no occupied slots
-    // within the hold or deck except the last one
-    final maxTier =
-        updatedSlot.tier < _baseDeckTier ? _baseDeckTier - 2 : _maxTier;
-    final baseTier =
-        updatedSlot.tier < _baseDeckTier ? _baseHoldTier : _baseDeckTier;
+  }
+  ///
+  /// Removes all slots, in bay and row of given [slot]
+  /// above which no occupied slots are found, except the lowest one,
+  /// within the hold or deck.
+  void _clearDanglingSlots(
+    Slot slot,
+    StowageCollection stowageCollection,
+  ) {
+    final maxTier = slot.tier < _baseDeckTier ? _baseDeckTier - 2 : _maxTier;
+    final baseTier = slot.tier < _baseDeckTier ? _baseHoldTier : _baseDeckTier;
     for (int currentTier = maxTier; currentTier > baseTier; currentTier -= 2) {
       final currentSlot = stowageCollection.findSlot(_bay, _row, currentTier);
       if (currentSlot?.containerId != null) break;
@@ -75,6 +83,5 @@ class RemoveContainerOperation implements StowageOperation {
         );
       }
     }
-    return const Ok(null);
   }
 }
