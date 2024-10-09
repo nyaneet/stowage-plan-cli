@@ -50,11 +50,7 @@ class RemoveContainerOperation implements StowageOperation {
     ).map(
       (emptySlot) {
         stowageCollection.addSlot(emptySlot);
-        return emptySlot;
-      },
-    ).bind(
-      (updatedSlot) {
-        return _clearDanglingSlots(updatedSlot, stowageCollection);
+        _clearDanglingSlots(emptySlot, stowageCollection);
       },
     );
   }
@@ -81,7 +77,7 @@ class RemoveContainerOperation implements StowageOperation {
   /// Removes all slots, in bay and row of given [slot]
   /// above which no occupied slots are found, except the lowest one,
   /// within the hold or deck.
-  ResultF<void> _clearDanglingSlots(
+  void _clearDanglingSlots(
     Slot slot,
     StowageCollection stowageCollection,
   ) {
@@ -99,6 +95,5 @@ class RemoveContainerOperation implements StowageOperation {
         );
       }
     }
-    return Ok(null);
   }
 }
