@@ -1,5 +1,6 @@
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/core/result_extension.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/container/container.dart';
@@ -20,7 +21,7 @@ class PutContainerOperation implements StowageOperation {
   /// Creates operation that puts the given [container] to stowage slot
   /// at specified position.
   ///
-  /// The [bay], [row], and [tier] parameters specify location of slot.
+  /// The [bay], [row] and [tier] numbers specify location of slot.
   const PutContainerOperation({
     required Container container,
     required int bay,
@@ -41,31 +42,36 @@ class PutContainerOperation implements StowageOperation {
   /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
-    // Find and update specified slot if exists
-    final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
-    switch (existingSlot) {
-      case final Slot existingSlot:
-        final updatedSlot = existingSlot.withContainer(_container);
-        switch (updatedSlot) {
-          case Ok(value: final updatedSlot):
-            stowageCollection.addSlot(updatedSlot);
-            // Add new slot for upper tier if possible
-            final upperSlot = updatedSlot.createUpperSlot();
-            switch (upperSlot) {
-              case Ok(value: final upperSlot):
-                stowageCollection.addSlot(upperSlot);
-              case Err(:final error):
-                print(error.message);
-            }
-            return Ok(null);
-          case Err(:final error):
-            return Err(error);
-        }
-      case null:
-        return Err(Failure(
-          message: 'Slot not found',
-          stackTrace: StackTrace.current,
-        ));
+    return _findSlot(_bay, _row, _tier, stowageCollection).bind(
+      (existingSlot) {
+        return existingSlot.withContainer(_container);
+      },
+    ).map(
+      (slotWithContainer) {
+        stowageCollection.addSlot(slotWithContainer);
+        slotWithContainer
+            .createUpperSlot()
+            .map((upperSlot) => stowageCollection.addSlot(upperSlot));
+      },
+    );
+  }
+  ///
+  /// Find slot at specified position.
+  ///
+  /// Returns [Ok] with slot if found, and [Err] otherwise.
+  ResultF<Slot> _findSlot(
+    int bay,
+    int row,
+    int tier,
+    StowageCollection stowageCollection,
+  ) {
+    final existingSlot = stowageCollection.findSlot(bay, row, tier);
+    if (existingSlot == null) {
+      return Err(Failure(
+        message: 'Slot to put container not found',
+        stackTrace: StackTrace.current,
+      ));
     }
+    return Ok(existingSlot);
   }
 }

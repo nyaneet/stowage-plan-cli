@@ -1,5 +1,6 @@
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/core/result_extension.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
@@ -23,7 +24,7 @@ class RemoveContainerOperation implements StowageOperation {
   /// Creates operation that removes the container from stowage slot
   /// at specified position.
   ///
-  /// The [bay], [row], and [tier] parameters specify location of slot.
+  /// The [bay], [row] and [tier] numbers specify location of slot.
   const RemoveContainerOperation({
     required int bay,
     required int row,
@@ -42,24 +43,35 @@ class RemoveContainerOperation implements StowageOperation {
   /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
-    final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
-    switch (existingSlot) {
-      case final Slot existingSlot:
-        final updatedSlot = existingSlot.empty();
-        switch (updatedSlot) {
-          case Ok(value: final updatedSlot):
-            stowageCollection.addSlot(updatedSlot);
-            _clearDanglingSlots(updatedSlot, stowageCollection);
-            return Ok(null);
-          case Err(:final error):
-            return Err(error);
-        }
-      case null:
-        return Err(Failure(
-          message: 'Slot not found',
-          stackTrace: StackTrace.current,
-        ));
+    return _findSlot(_bay, _row, _tier, stowageCollection).bind(
+      (existingSlot) {
+        return existingSlot.empty();
+      },
+    ).map(
+      (emptySlot) {
+        stowageCollection.addSlot(emptySlot);
+        _clearDanglingSlots(emptySlot, stowageCollection);
+      },
+    );
+  }
+  ///
+  /// Find slot at specified position.
+  ///
+  /// Returns [Ok] with slot if found, and [Err] otherwise.
+  ResultF<Slot> _findSlot(
+    int bay,
+    int row,
+    int tier,
+    StowageCollection stowageCollection,
+  ) {
+    final existingSlot = stowageCollection.findSlot(bay, row, tier);
+    if (existingSlot == null) {
+      return Err(Failure(
+        message: 'Slot to remove container not found',
+        stackTrace: StackTrace.current,
+      ));
     }
+    return Ok(existingSlot);
   }
   ///
   /// Removes all slots, in bay and row of given [slot]
