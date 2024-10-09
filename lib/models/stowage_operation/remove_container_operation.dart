@@ -59,7 +59,7 @@ class RemoveContainerOperation implements StowageOperation {
     );
   }
   ///
-  /// Find slot in specified position.
+  /// Find slot at specified position.
   ///
   /// Returns [Ok] with slot if found, and [Err] otherwise.
   ResultF<Slot> _findSlot(

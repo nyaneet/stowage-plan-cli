@@ -51,18 +51,17 @@ class PutContainerOperation implements StowageOperation {
         stowageCollection.addSlot(existingSlot);
         return existingSlot;
       },
-    ).bind(
-      (slotWithContainer) {
-        return slotWithContainer.createUpperSlot();
-      },
     ).map(
-      (upperSlot) {
-        stowageCollection.addSlot(upperSlot);
+      (slotWithContainer) {
+        // Create new slot for upper tier if possible
+        slotWithContainer
+            .createUpperSlot()
+            .map((upperSlot) => stowageCollection.addSlot(upperSlot));
       },
     );
   }
   ///
-  /// Find slot in specified position.
+  /// Find slot at specified position.
   ///
   /// Returns [Ok] with slot if found, and [Err] otherwise.
   ResultF<Slot> _findSlot(
