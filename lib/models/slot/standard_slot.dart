@@ -67,7 +67,7 @@ class StandardSlot implements Slot {
   });
   //
   @override
-  ResultF<Slot> createUpperSlot({double? verticalSeparation}) {
+  ResultF<Slot?> createUpperSlot({double? verticalSeparation}) {
     final tierUpper = tier + 2;
     final tierSeparation = verticalSeparation ?? minVerticalSeparation;
     final leftZUpper = rightZ + tierSeparation;
@@ -78,12 +78,7 @@ class StandardSlot implements Slot {
         stackTrace: StackTrace.current,
       ));
     }
-    if (rightZUpper > maxHeight) {
-      return Err(Failure(
-        message: 'Slot must not exceed $maxHeight m.',
-        stackTrace: StackTrace.current,
-      ));
-    }
+    if (rightZUpper > maxHeight) return Ok(null);
     return Ok(StandardSlot(
       bay: bay,
       row: row,

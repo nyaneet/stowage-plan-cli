@@ -43,22 +43,19 @@ class PutContainerOperation implements StowageOperation {
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
     return _findSlot(_bay, _row, _tier, stowageCollection).bind(
-      (slot) {
-        return slot.withContainer(_container);
-      },
-    ).map(
       (existingSlot) {
-        stowageCollection.addSlot(existingSlot);
-        return existingSlot;
+        return existingSlot.withContainer(_container);
       },
-    ).map(
+    ).bind(
       (slotWithContainer) {
-        // Create new slot for upper tier if possible
-        slotWithContainer
-            .createUpperSlot()
-            .map((upperSlot) => stowageCollection.addSlot(upperSlot));
+        stowageCollection.addSlot(slotWithContainer);
+        return slotWithContainer.createUpperSlot();
       },
-    );
+    ).map((upperSlot) {
+      if (upperSlot != null) {
+        stowageCollection.addSlot(upperSlot);
+      }
+    });
   }
   ///
   /// Find slot at specified position.

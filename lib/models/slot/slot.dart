@@ -62,12 +62,13 @@ abstract interface class Slot {
   /// this slot and the new slot. If [verticalSeparation] is `null`, the
   /// [minVerticalSeparation] value is used.
   ///
-  /// Returns [Ok] with the new slot if a slot for the next tier can be created.
+  /// Returns [Ok] with the new slot if a slot for the next tier can be created,
+  /// and [Ok] with `null` if a slot for the next tier cannot be created
+  /// (e.g., it exceeds the maximum allowed height).
   ///
-  /// Returns [Err] if a slot for the next tier cannot be created
-  /// (e.g., new slot exceeds [maxHeight] or [verticalSeparation]
-  /// is less than [minVerticalSeparation]).
-  ResultF<Slot> createUpperSlot({double? verticalSeparation});
+  /// Returns [Err] if input parameters are invalid
+  /// (e.g., [verticalSeparation] is less than [minVerticalSeparation]).
+  ResultF<Slot?> createUpperSlot({double? verticalSeparation});
   ///
   /// Creates a copy of this slot with the given [container] placed in it.
   /// The new slot's [rightZ] coordinate will be adjusted to fit the container's height.

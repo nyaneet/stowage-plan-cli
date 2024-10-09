@@ -3,6 +3,7 @@ import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
 import 'package:test/test.dart';
+//
 void main() {
   //
   group(

@@ -3,6 +3,7 @@ import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
 import 'package:test/test.dart';
+//
 void main() {
   //
   group(
@@ -35,12 +36,17 @@ void main() {
           final result = slot.createUpperSlot();
           expect(
             result,
-            isA<Ok<Slot, Failure>>(),
-            reason: 'Should return [Ok] with new slot',
+            isA<Ok<Slot?, Failure>>(),
+            reason: 'Should return [Ok]',
           );
-          final upperSlot = (result as Ok<Slot, Failure>).value;
+          final upperSlot = (result as Ok<Slot?, Failure>).value;
           expect(
-            upperSlot.bay,
+            upperSlot,
+            isNotNull,
+            reason: 'should return [Ok] with new slot',
+          );
+          expect(
+            upperSlot!.bay,
             equals(slot.bay),
             reason: 'bay should be the same',
           );
@@ -111,12 +117,17 @@ void main() {
           );
           expect(
             result,
-            isA<Ok<Slot, Failure>>(),
-            reason: 'Should return [Ok] with new slot',
+            isA<Ok<Slot?, Failure>>(),
+            reason: 'Should return [Ok]',
           );
-          final upperSlot = (result as Ok<Slot, Failure>).value;
+          final upperSlot = (result as Ok<Slot?, Failure>).value;
           expect(
-            upperSlot.leftZ,
+            upperSlot,
+            isNotNull,
+            reason: 'should return [Ok] with new slot',
+          );
+          expect(
+            upperSlot!.leftZ,
             equals(slot.rightZ + verticalSeparation),
             reason: 'Should use given verticalSeparation',
           );
@@ -125,7 +136,7 @@ void main() {
       );
       //
       test(
-        'returns [Err] if new slot exceeds maxHeight',
+        'does not create new slot if it exceeds maxHeight',
         () {
           final slotWithLowMaxHeight = StandardSlot(
             bay: 1,
@@ -143,21 +154,27 @@ void main() {
           final result = slotWithLowMaxHeight.createUpperSlot();
           expect(
             result,
-            isA<Err<Slot, Failure>>(),
-            reason: 'Should return [Err] if new slot exceeds maxHeight',
+            isA<Ok<Slot?, Failure>>(),
+            reason: 'Should return [Ok]',
+          );
+          final upperSlot = (result as Ok<Slot?, Failure>).value;
+          expect(
+            upperSlot,
+            isNull,
+            reason: 'Should return [Ok] with null',
           );
         },
       );
       //
       test(
-        'returns null if verticalSeparation less than minVerticalSeparation',
+        'returns [Err] if verticalSeparation is less than minVerticalSeparation',
         () {
           final result = slot.createUpperSlot(
             verticalSeparation: slot.minVerticalSeparation - 1.0,
           );
           expect(
             result,
-            isA<Err<Slot, Failure>>(),
+            isA<Err<Slot?, Failure>>(),
             reason:
                 'Should return [Err] if verticalSeparation is less than minVerticalSeparation',
           );
