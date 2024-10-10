@@ -1,5 +1,7 @@
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/core/result_extension.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
@@ -22,7 +24,7 @@ class RemoveContainerOperation implements StowageOperation {
   /// Creates operation that removes the container from stowage slot
   /// at specified position.
   ///
-  /// The [bay], [row], and [tier] parameters specify location of slot.
+  /// The [bay], [row] and [tier] numbers specify location of slot.
   const RemoveContainerOperation({
     required int bay,
     required int row,
@@ -41,28 +43,46 @@ class RemoveContainerOperation implements StowageOperation {
   /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
-    // Remove container form specified slot
-    final existingSlot = stowageCollection.findSlot(_bay, _row, _tier);
+    return _findSlot(_bay, _row, _tier, stowageCollection).bind(
+      (existingSlot) {
+        return existingSlot.empty();
+      },
+    ).map(
+      (emptySlot) {
+        stowageCollection.addSlot(emptySlot);
+        _clearDanglingSlots(emptySlot, stowageCollection);
+      },
+    );
+  }
+  ///
+  /// Find slot at specified position.
+  ///
+  /// Returns [Ok] with slot if found, and [Err] otherwise.
+  ResultF<Slot> _findSlot(
+    int bay,
+    int row,
+    int tier,
+    StowageCollection stowageCollection,
+  ) {
+    final existingSlot = stowageCollection.findSlot(bay, row, tier);
     if (existingSlot == null) {
       return Err(Failure(
-        message: 'Slot not found',
+        message: 'Slot to remove container not found',
         stackTrace: StackTrace.current,
       ));
     }
-    final updatedSlot = existingSlot.empty();
-    if (updatedSlot == null) {
-      return Err(Failure(
-        message: 'Slot already empty',
-        stackTrace: StackTrace.current,
-      ));
-    }
-    stowageCollection.addSlot(updatedSlot);
-    // Clear all slots above which there are no occupied slots
-    // within the hold or deck except the last one
-    final maxTier =
-        updatedSlot.tier < _baseDeckTier ? _baseDeckTier - 2 : _maxTier;
-    final baseTier =
-        updatedSlot.tier < _baseDeckTier ? _baseHoldTier : _baseDeckTier;
+    return Ok(existingSlot);
+  }
+  ///
+  /// Removes all slots, in bay and row of given [slot]
+  /// above which no occupied slots are found, except the lowest one,
+  /// within the hold or deck.
+  void _clearDanglingSlots(
+    Slot slot,
+    StowageCollection stowageCollection,
+  ) {
+    final maxTier = slot.tier < _baseDeckTier ? _baseDeckTier - 2 : _maxTier;
+    final baseTier = slot.tier < _baseDeckTier ? _baseHoldTier : _baseDeckTier;
     for (int currentTier = maxTier; currentTier > baseTier; currentTier -= 2) {
       final currentSlot = stowageCollection.findSlot(_bay, _row, currentTier);
       if (currentSlot?.containerId != null) break;
@@ -75,6 +95,5 @@ class RemoveContainerOperation implements StowageOperation {
         );
       }
     }
-    return const Ok(null);
   }
 }

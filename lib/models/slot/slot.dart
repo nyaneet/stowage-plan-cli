@@ -1,3 +1,4 @@
+import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/container/container.dart';
 ///
 /// Simple representation of stowage slot,
@@ -55,29 +56,35 @@ abstract interface class Slot {
   /// If slot is empty, [containerId] is `null`.
   int? get containerId;
   ///
-  /// Creates and returns empty stowage slot for the next tier above this slot.
+  /// Creates an empty stowage slot for the next tier above this slot.
   ///
   /// The [verticalSeparation] parameter specifies the vertical distance between
   /// this slot and the new slot. If [verticalSeparation] is `null`, the
   /// [minVerticalSeparation] value is used.
   ///
-  /// Returns `null` if a slot for the next tier cannot be created
+  /// Returns [Ok] with the new slot if a slot for the next tier can be created.
+  ///
+  /// Returns [Err] if a slot for the next tier cannot be created
   /// (e.g., new slot exceeds [maxHeight] or [verticalSeparation]
   /// is less than [minVerticalSeparation]).
-  Slot? createUpperSlot({double? verticalSeparation});
+  ResultF<Slot> createUpperSlot({double? verticalSeparation});
   ///
-  /// Creates and returns a copy of this slot with the given [container] placed in it.
-  ///
-  /// If the operation cannot be performed (e.g., the slot already contains a container),
-  /// returns `null`.
+  /// Creates a copy of this slot with the given [container] placed in it.
   /// The new slot's [rightZ] coordinate will be adjusted to fit the container's height.
-  Slot? withContainer(Container container);
   ///
-  /// Creates and returns a copy of this slot with the container removed.
+  /// Returns [Ok] with the new slot if container can be placed in this slot.
   ///
-  /// If the operation cannot be performed (e.g., the slot is already empty),
-  /// returns `null`.
-  Slot? empty();
+  /// Returns [Err] if container cannot be placed in this slot
+  /// (e.g., the slot already contains a container).
+  ResultF<Slot> withContainer(Container container);
+  ///
+  /// Creates a copy of this slot with the container removed.
+  ///
+  /// Returns [Ok] with the new slot if container can be removed from this slot.
+  ///
+  /// Returns [Err] if container cannot be removed from this slot
+  /// (e.g., the slot is already empty).
+  ResultF<Slot> empty();
   ///
   /// Creates and returns a copy of this stowage slot.
   Slot copy();

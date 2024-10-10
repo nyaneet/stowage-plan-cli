@@ -1,4 +1,7 @@
+import 'package:stowage_plan/core/failure.dart';
+import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/container/container.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
 import 'package:test/test.dart';
 ///
@@ -24,7 +27,7 @@ void main() {
     () {
       //
       test(
-        'returns a new slot with container',
+        'creates slot with container',
         () {
           final container = FakeContainer(id: 1);
           final emptySlot = StandardSlot(
@@ -40,16 +43,18 @@ void main() {
             maxHeight: 10.0,
             minVerticalSeparation: 0.5,
           );
-          final slotWithContainer = emptySlot.withContainer(container);
+          final slotWithContainerResult = emptySlot.withContainer(container);
           expect(
-            slotWithContainer,
-            isNotNull,
-            reason: 'Should return a new slot with container',
+            slotWithContainerResult,
+            isA<Ok<Slot, Failure>>(),
+            reason: 'Should return [Ok] with new slot',
           );
+          final slotWithContainer =
+              (slotWithContainerResult as Ok<Slot, Failure>).value;
           expect(
-            slotWithContainer!.containerId,
+            slotWithContainer.containerId,
             equals(container.id),
-            reason: 'Container ID should be set correctly',
+            reason: 'container ID should be set correctly',
           );
           expect(
             slotWithContainer.rightZ,
@@ -110,7 +115,7 @@ void main() {
       );
       //
       test(
-        'returns null if slot already contains a container',
+        'returns [Err] if slot already contains a container',
         () {
           final container = FakeContainer(id: 1);
           final slotWithContainer = StandardSlot(
@@ -130,14 +135,14 @@ void main() {
           final result = slotWithContainer.withContainer(container);
           expect(
             result,
-            isNull,
-            reason: 'Should return null if slot already has a container',
+            isA<Err<Slot, Failure>>(),
+            reason: 'Should return [Err]',
           );
         },
       );
       //
       test(
-        'returns null if container exceeds maxHeight',
+        'returns [Err] if container exceeds maxHeight',
         () {
           final container = FakeContainer(id: 1);
           final slotWithLowMaxHeight = StandardSlot(
@@ -156,8 +161,8 @@ void main() {
           final result = slotWithLowMaxHeight.withContainer(container);
           expect(
             result,
-            isNull,
-            reason: 'Should return null if container exceeds maxHeight',
+            isA<Err<Slot, Failure>>(),
+            reason: 'Should return [Err] if container exceeds maxHeight',
           );
         },
       );
