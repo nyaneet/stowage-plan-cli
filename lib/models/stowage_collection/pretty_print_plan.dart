@@ -86,6 +86,7 @@ extension PrettyPrint on StowageCollection {
   /// in accordance with stowage numbering system for rows
   /// [ISO 9711-1, 3.2](https://www.iso.org/ru/standard/17568.html)
   Iterable<int> _iterateRows(int maxRow, bool withZeroRow) sync* {
+    maxRow += maxRow.isOdd ? 1 : 0;
     for (int row = maxRow; row >= 2; row -= 2) {
       yield row;
     }
@@ -99,6 +100,7 @@ extension PrettyPrint on StowageCollection {
   /// in accordance with stowage numbering system for rows
   /// [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
   Iterable<int> _iterateTiers(int maxTier) sync* {
+    maxTier += maxTier.isOdd ? 1 : 0;
     for (int tier = maxTier; tier >= 2; tier -= 2) {
       yield tier;
     }

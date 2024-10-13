@@ -43,7 +43,7 @@ class RemoveContainerOperation implements StowageOperation {
   /// and [Err] otherwise.
   @override
   ResultF<void> execute(StowageCollection stowageCollection) {
-    return _findSlot(_bay, _row, _tier, stowageCollection).bind(
+    return _findSlot(_bay, _row, _tier, stowageCollection).andThen(
       (existingSlot) {
         return existingSlot.empty();
       },
@@ -87,7 +87,9 @@ class RemoveContainerOperation implements StowageOperation {
       final currentSlot = stowageCollection.findSlot(_bay, _row, currentTier);
       if (currentSlot?.containerId != null) break;
       final belowSlot = stowageCollection.findSlot(_bay, _row, currentTier - 2);
-      if (belowSlot?.containerId == null && currentSlot != null) {
+      if (belowSlot?.containerId == null &&
+          currentSlot != null &&
+          belowSlot != null) {
         stowageCollection.removeSlot(
           currentSlot.bay,
           currentSlot.row,

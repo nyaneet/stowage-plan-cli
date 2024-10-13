@@ -3,6 +3,7 @@ import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/container/container.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
+import 'package:stowage_plan/models/stowage_collection/pretty_print_plan.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 import 'package:stowage_plan/models/stowage_operation/put_container_operation.dart';
 import 'package:test/test.dart';
@@ -13,7 +14,11 @@ class FakeStowageCollection implements StowageCollection {
   FakeStowageCollection._(List<Slot> slots) : _slots = slots;
   ///
   factory FakeStowageCollection.fromSlots(List<Slot> slots) {
-    return FakeStowageCollection._(slots);
+    return FakeStowageCollection._(slots
+        .map(
+          (s) => s.copy(),
+        )
+        .toList());
   }
   //
   @override
@@ -71,6 +76,11 @@ class FakeStowageCollection implements StowageCollection {
     }
     return filteredSlots;
   }
+  //
+  @override
+  StowageCollection copy() {
+    return FakeStowageCollection.fromSlots(_slots);
+  }
 }
 ///
 class FakeContainer implements Container {
@@ -97,6 +107,10 @@ void main() {
     late FakeStowageCollection collection;
     //
     setUp(() {
+      // BAY No. 01
+      // 04     [ ]
+      // 02     [▥] [ ] [ ]
+      //     04  02  01  03
       collection = FakeStowageCollection.fromSlots([
         StandardSlot(
           bay: 1,
@@ -129,7 +143,7 @@ void main() {
         StandardSlot(
           bay: 1,
           row: 2,
-          tier: 3,
+          tier: 4,
           leftX: 0.0,
           rightX: 1.0,
           leftY: 1.0,
@@ -155,6 +169,10 @@ void main() {
           containerId: null,
         ),
       ]);
+      collection.printAll();
+    });
+    tearDown(() {
+      collection.printAll();
     });
     //
     test('adds slot with container to collection', () {

@@ -74,6 +74,13 @@ class StowageMap implements StowageCollection {
   }
   //
   @override
+  StowageCollection copy() {
+    return StowageMap.fromSlotList(
+      toFilteredSlotList(),
+    );
+  }
+  //
+  @override
   String toString() => _plan.toString();
 }
 ///

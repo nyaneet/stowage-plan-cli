@@ -79,6 +79,22 @@ abstract interface class Slot {
   /// (e.g., the slot already contains a container).
   ResultF<Slot> withContainer(Container container);
   ///
+  /// Adjust the [rightZ] coordinate of this slot to fit the given [height].
+  ///
+  /// Returns [Ok] with the new slot if the height can be adjusted.
+  ///
+  /// Returns [Err] if the height cannot be adjusted
+  /// (e.g., the slot already contains a container, or new slot exceeds the maximum height).
+  ResultF<Slot> resizeToHeight(double height);
+  ///
+  /// Shift [leftZ] and [rightZ] coordinate of this slot by the given [value].
+  ///
+  /// Returns [Ok] with the new slot if the slot can be shifted.
+  ///
+  /// Returns [Err] if the slot cannot be shifted
+  /// (e.g., new slot exceeds the maximum height).
+  ResultF<Slot> shiftByZ(double value);
+  ///
   /// Creates a copy of this slot with the container removed.
   ///
   /// Returns [Ok] with the new slot if container can be removed from this slot.
