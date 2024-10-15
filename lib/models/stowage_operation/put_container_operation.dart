@@ -4,7 +4,7 @@ import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/core/result_extension.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
-import 'package:stowage_plan/models/container/container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
 /// Operation that puts container to stowage slot
@@ -19,7 +19,7 @@ class PutContainerOperation implements StowageOperation {
   /// Maximum possible tier number for deck.
   static const int _maxDeckTier = 98;
   /// The container to be put to stowage slot.
-  final Container _container;
+  final FreightContainer _container;
   /// Bay number of slot where container should be put.
   final int _bay;
   /// Row number of slot where container should be put.
@@ -32,7 +32,7 @@ class PutContainerOperation implements StowageOperation {
   ///
   /// The [bay], [row] and [tier] numbers specify location of slot.
   const PutContainerOperation({
-    required Container container,
+    required FreightContainer container,
     required int bay,
     required int row,
     required int tier,
@@ -202,7 +202,7 @@ class PutContainerOperation implements StowageOperation {
   }
   ///
   ResultF<void> _createUpperEvenBaySlot(StowageCollection collection) {
-    // if (_bay.isOdd) return const Ok(null);
+    if (_bay.isOdd) return const Ok(null);
     return _findSlot(_bay, _row, _tier, collection).andThen(
       (slot) {
         return slot.createUpperSlot();

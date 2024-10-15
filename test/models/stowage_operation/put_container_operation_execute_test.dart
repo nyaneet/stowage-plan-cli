@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:stowage_plan/core/result.dart';
-import 'package:stowage_plan/models/container/container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container_type.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
 import 'package:stowage_plan/models/stowage_collection/pretty_print_plan.dart';
@@ -83,21 +84,27 @@ class FakeStowageCollection implements StowageCollection {
   }
 }
 ///
-class FakeContainer implements Container {
+class FakeContainer implements FreightContainer {
   @override
   final int id;
   @override
-  final int height; // mm
+  final double height; // m
   @override
-  final int length = 1000; // mm
+  final double length = 1;
   @override
-  final int width = 1000; // mm
+  final double width = 1;
   @override
   final double grossWeight = 0.0;
+  @override
+  double get tareWeight => 0.0;
+  @override
+  double get cargoWeight => 0.0;
+  @override
+  FreightContainerType get type => FreightContainerType.type1AA;
   ///
   const FakeContainer({
     required this.id,
-    this.height = 1000,
+    this.height = 1,
   });
 }
 //
@@ -252,7 +259,6 @@ void main() {
             'upper slot should be null after adding container to collection',
       );
     });
-    //
     test('does not add container if slot is already occupied', () {
       final container = FakeContainer(id: 1);
       final operation = PutContainerOperation(
@@ -270,7 +276,7 @@ void main() {
     });
     //
     test('updates slot z coordinates when container is put', () {
-      final containerHeight = 1000; // in mm
+      final containerHeight = 1.0; // in mm
       final container = FakeContainer(id: 1, height: containerHeight);
       final operation = PutContainerOperation(
         bay: 1,
@@ -297,13 +303,13 @@ void main() {
       );
       expect(
         slot.rightZ,
-        containerHeight / 1000,
-        reason: 'slot.rightZ should be equal to container.height / 1000',
+        containerHeight,
+        reason: 'slot.rightZ should be equal to container.height',
       );
     });
     //
     test('creates slot above with correct z coordinates', () {
-      final containerHeight = 1000; // in mm
+      final containerHeight = 1.0; // in mm
       final standardSlotHeight = 2.59; // in m
       final container = FakeContainer(id: 1, height: containerHeight);
       final operation = PutContainerOperation(

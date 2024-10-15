@@ -1,6 +1,6 @@
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
-import 'package:stowage_plan/models/container/container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 ///
 /// A stowage slot with standard height
@@ -11,8 +11,11 @@ class StandardSlot implements Slot {
   /// 2.59 m in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
   static const double _standardHeight = 2.59;
   ///
-  ///
+  /// Maximum possible tier number in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
   static const int _maxTier = 98;
+  ///
+  ///
+  static const _nextTierStep = 2;
   //
   @override
   final int bay;
@@ -54,7 +57,7 @@ class StandardSlot implements Slot {
   /// If a slot of next tier is created,
   /// rules for its separation along the vertical axis
   /// will be identical.
-  const StandardSlot({
+  StandardSlot({
     required this.bay,
     required this.row,
     required this.tier,
@@ -71,7 +74,7 @@ class StandardSlot implements Slot {
   //
   @override
   ResultF<Slot?> createUpperSlot({double? verticalSeparation}) {
-    final tierUpper = tier + 2;
+    final tierUpper = tier + _nextTierStep;
     final tierSeparation = verticalSeparation ?? minVerticalSeparation;
     final leftZUpper = rightZ + tierSeparation;
     final rightZUpper = leftZUpper + _standardHeight;
@@ -105,14 +108,8 @@ class StandardSlot implements Slot {
   }
   //
   @override
-  ResultF<Slot> withContainer(Container container) {
-    final rightZAdjusted = leftZ + container.height / 1000;
-    if (containerId != null) {
-      return Err(Failure(
-        message: 'Slot already occupied',
-        stackTrace: StackTrace.current,
-      ));
-    }
+  ResultF<Slot> withContainer(FreightContainer container) {
+    final rightZAdjusted = leftZ + container.height;
     if (rightZAdjusted > maxHeight) {
       return Err(Failure(
         message: 'Slot with container must not exceed $maxHeight m.',

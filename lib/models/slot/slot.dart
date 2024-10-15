@@ -1,5 +1,5 @@
 import 'package:stowage_plan/core/result.dart';
-import 'package:stowage_plan/models/container/container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container.dart';
 ///
 /// Simple representation of stowage slot,
 /// a place where container can be loaded.
@@ -75,9 +75,9 @@ abstract interface class Slot {
   ///
   /// Returns [Ok] with the new slot if container can be placed in this slot.
   ///
-  /// Returns [Err] if container cannot be placed in this slot
-  /// (e.g., the slot already contains a container).
-  ResultF<Slot> withContainer(Container container);
+  /// Returns [Err] if container cannot be placed in this slot.
+  /// (e.g., new slot exceeds the maximum height).
+  ResultF<Slot> withContainer(FreightContainer container);
   ///
   /// Adjust the [rightZ] coordinate of this slot to fit the given [height].
   ///

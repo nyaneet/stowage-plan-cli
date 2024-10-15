@@ -1,8 +1,9 @@
-import 'package:stowage_plan/models/container/container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container.dart';
+import 'package:stowage_plan/models/freight_container/freight_container_type.dart';
 ///
 /// 40 ft container with standard height,
 /// in accordance with [ISO 668](https://www.iso.org/ru/standard/76912.html)
-class Container1AA implements Container {
+class Container1AA implements FreightContainer {
   final double _tareWeight;
   final double _cargoWeight;
   //
@@ -20,14 +21,23 @@ class Container1AA implements Container {
         _cargoWeight = cargoWeight;
   //
   @override
-  int get width => 2438;
+  double get width => 2438 / 1000;
   //
   @override
-  int get length => 12192;
+  double get length => 12192 / 1000;
   //
   @override
-  int get height => 2591;
+  double get height => 2591 / 1000;
   //
   @override
   double get grossWeight => _tareWeight + _cargoWeight;
+  //
+  @override
+  double get tareWeight => _tareWeight;
+  //
+  @override
+  double get cargoWeight => _cargoWeight;
+  //
+  @override
+  FreightContainerType get type => FreightContainerType.type1AA;
 }
