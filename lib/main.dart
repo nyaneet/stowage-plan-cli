@@ -1,6 +1,6 @@
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/slot/standard_slot.dart';
-const List<Slot> arkSlotOrigins = [
+List<Slot> arkSlotOrigins = [
   StandardSlot(
     bay: 1,
     row: 1,
@@ -16,7 +16,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 1,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 29.16,
     rightX: 35.218,
@@ -29,7 +29,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 1,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 29.16,
     rightX: 35.218,
@@ -68,7 +68,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 2,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 23.027,
     rightX: 35.217,
@@ -81,7 +81,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 2,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 23.027,
     rightX: 35.217,
@@ -120,7 +120,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 3,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 23.026,
     rightX: 29.084,
@@ -133,7 +133,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 3,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 23.026,
     rightX: 29.084,
@@ -172,7 +172,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 4,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 16.893,
     rightX: 29.083,
@@ -185,7 +185,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 4,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 16.893,
     rightX: 29.083,
@@ -224,7 +224,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 5,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 16.892,
     rightX: 22.95,
@@ -237,7 +237,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 5,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 16.892,
     rightX: 22.95,
@@ -276,7 +276,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 6,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 10.759,
     rightX: 22.949,
@@ -289,7 +289,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 6,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 10.759,
     rightX: 22.949,
@@ -328,7 +328,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 7,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 10.758,
     rightX: 16.816,
@@ -341,7 +341,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 7,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 10.758,
     rightX: 16.816,
@@ -380,7 +380,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 8,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 4.625,
     rightX: 16.815,
@@ -393,7 +393,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 8,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 4.625,
     rightX: 16.815,
@@ -432,7 +432,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 9,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: 4.624,
     rightX: 10.682,
@@ -445,7 +445,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 9,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: 4.624,
     rightX: 10.682,
@@ -484,7 +484,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 10,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -1.509,
     rightX: 10.681,
@@ -497,7 +497,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 10,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -1.509,
     rightX: 10.681,
@@ -536,7 +536,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 11,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -1.51,
     rightX: 4.548,
@@ -549,7 +549,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 11,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -1.51,
     rightX: 4.548,
@@ -588,7 +588,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 12,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -7.643,
     rightX: 4.547,
@@ -601,7 +601,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 12,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -7.643,
     rightX: 4.547,
@@ -640,7 +640,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 13,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -7.644,
     rightX: -1.586,
@@ -653,7 +653,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 13,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -7.644,
     rightX: -1.586,
@@ -692,7 +692,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 14,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -13.777,
     rightX: -1.587,
@@ -705,7 +705,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 14,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -13.777,
     rightX: -1.587,
@@ -744,7 +744,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 15,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -13.778,
     rightX: -7.72,
@@ -757,7 +757,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 15,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -13.778,
     rightX: -7.72,
@@ -796,7 +796,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 16,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -19.911,
     rightX: -7.721,
@@ -809,7 +809,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 16,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -19.911,
     rightX: -7.721,
@@ -848,7 +848,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 17,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -19.912,
     rightX: -13.854,
@@ -861,7 +861,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 17,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -19.912,
     rightX: -13.854,
@@ -900,7 +900,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 18,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -26.045,
     rightX: -13.855,
@@ -913,7 +913,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 18,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -26.045,
     rightX: -13.855,
@@ -952,7 +952,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 19,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -26.046,
     rightX: -19.988,
@@ -965,7 +965,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 19,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -26.046,
     rightX: -19.988,
@@ -1004,7 +1004,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 20,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -32.179,
     rightX: -19.989,
@@ -1017,7 +1017,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 20,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -32.179,
     rightX: -19.989,
@@ -1056,7 +1056,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 21,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -32.18,
     rightX: -26.122,
@@ -1069,7 +1069,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 21,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -32.18,
     rightX: -26.122,
@@ -1108,7 +1108,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 22,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -38.313,
     rightX: -26.123,
@@ -1121,7 +1121,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 22,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -38.313,
     rightX: -26.123,
@@ -1160,7 +1160,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 23,
-    row: 2,
+    row: 3,
     tier: 2,
     leftX: -38.314,
     rightX: -32.256,
@@ -1173,7 +1173,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 23,
-    row: 3,
+    row: 2,
     tier: 2,
     leftX: -38.314,
     rightX: -32.256,
@@ -1212,7 +1212,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 1,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 27.028,
     rightX: 33.086,
@@ -1225,7 +1225,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 1,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 27.028,
     rightX: 33.086,
@@ -1264,7 +1264,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 2,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 20.895,
     rightX: 33.085,
@@ -1277,7 +1277,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 2,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 20.895,
     rightX: 33.085,
@@ -1316,7 +1316,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 3,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 20.894,
     rightX: 26.952,
@@ -1329,7 +1329,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 3,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 20.894,
     rightX: 26.952,
@@ -1368,7 +1368,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 4,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 14.761,
     rightX: 26.951,
@@ -1381,7 +1381,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 4,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 14.761,
     rightX: 26.951,
@@ -1420,7 +1420,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 5,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 14.76,
     rightX: 20.818,
@@ -1433,7 +1433,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 5,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 14.76,
     rightX: 20.818,
@@ -1472,7 +1472,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 6,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 8.627,
     rightX: 20.817,
@@ -1485,7 +1485,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 6,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 8.627,
     rightX: 20.817,
@@ -1524,7 +1524,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 7,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 8.626,
     rightX: 14.684,
@@ -1537,7 +1537,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 7,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 8.626,
     rightX: 14.684,
@@ -1576,7 +1576,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 8,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 2.493,
     rightX: 14.683,
@@ -1589,7 +1589,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 8,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 2.493,
     rightX: 14.683,
@@ -1628,7 +1628,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 9,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: 2.492,
     rightX: 8.55,
@@ -1641,7 +1641,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 9,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: 2.492,
     rightX: 8.55,
@@ -1680,7 +1680,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 10,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -3.641,
     rightX: 8.549,
@@ -1693,7 +1693,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 10,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -3.641,
     rightX: 8.549,
@@ -1732,7 +1732,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 11,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -3.642,
     rightX: 2.416,
@@ -1745,7 +1745,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 11,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -3.642,
     rightX: 2.416,
@@ -1784,7 +1784,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 12,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -9.775,
     rightX: 2.415,
@@ -1797,7 +1797,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 12,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -9.775,
     rightX: 2.415,
@@ -1836,7 +1836,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 13,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -9.776,
     rightX: -3.718,
@@ -1849,7 +1849,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 13,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -9.776,
     rightX: -3.718,
@@ -1888,7 +1888,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 14,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -15.909,
     rightX: -3.719,
@@ -1901,7 +1901,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 14,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -15.909,
     rightX: -3.719,
@@ -1940,7 +1940,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 15,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -15.91,
     rightX: -9.852,
@@ -1953,7 +1953,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 15,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -15.91,
     rightX: -9.852,
@@ -1992,7 +1992,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 16,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -22.043,
     rightX: -9.853,
@@ -2005,7 +2005,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 16,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -22.043,
     rightX: -9.853,
@@ -2044,7 +2044,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 17,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -22.044,
     rightX: -15.986,
@@ -2057,7 +2057,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 17,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -22.044,
     rightX: -15.986,
@@ -2096,7 +2096,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 18,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -28.177,
     rightX: -15.987,
@@ -2109,7 +2109,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 18,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -28.177,
     rightX: -15.987,
@@ -2148,7 +2148,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 19,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -28.178,
     rightX: -22.12,
@@ -2161,7 +2161,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 19,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -28.178,
     rightX: -22.12,
@@ -2200,7 +2200,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 20,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -34.311,
     rightX: -22.121,
@@ -2213,7 +2213,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 20,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -34.311,
     rightX: -22.121,
@@ -2252,7 +2252,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 21,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -34.312,
     rightX: -28.254,
@@ -2265,7 +2265,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 21,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -34.312,
     rightX: -28.254,
@@ -2304,7 +2304,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 22,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -40.445,
     rightX: -28.255,
@@ -2317,7 +2317,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 22,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -40.445,
     rightX: -28.255,
@@ -2356,7 +2356,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 23,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -40.446,
     rightX: -34.388,
@@ -2369,7 +2369,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 23,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -40.446,
     rightX: -34.388,
@@ -2408,7 +2408,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 24,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -46.579,
     rightX: -34.389,
@@ -2421,7 +2421,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 24,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -46.579,
     rightX: -34.389,
@@ -2460,7 +2460,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 25,
-    row: 2,
+    row: 3,
     tier: 82,
     leftX: -46.58,
     rightX: -40.522,
@@ -2473,7 +2473,7 @@ const List<Slot> arkSlotOrigins = [
   ),
   StandardSlot(
     bay: 25,
-    row: 3,
+    row: 2,
     tier: 82,
     leftX: -46.58,
     rightX: -40.522,
