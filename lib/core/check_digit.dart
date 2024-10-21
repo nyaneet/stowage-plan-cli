@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
+import 'package:stowage_plan/core/extension_transform.dart';
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
-import 'package:stowage_plan/core/result_extension.dart';
 class CheckDigit {
   ///
   /// Length of valid container code.

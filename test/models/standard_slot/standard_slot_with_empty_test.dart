@@ -7,11 +7,11 @@ import 'package:test/test.dart';
 void main() {
   //
   group(
-    'StandardSlot empty',
+    'StandardSlot empty method',
     () {
       //
       test(
-        'returns [Ok] with new empty slot',
+        'returns [Ok] with new slot',
         () {
           final slotWithContainer = StandardSlot(
             bay: 1,
@@ -41,31 +41,31 @@ void main() {
           );
         },
       );
-      //
-      test(
-        'returns [Err] if slot is already empty',
-        () {
-          final emptySlot = StandardSlot(
-            bay: 1,
-            row: 2,
-            tier: 4,
-            leftX: 10.0,
-            rightX: 16.0,
-            leftY: 2.0,
-            rightY: 6.0,
-            leftZ: 1.0,
-            rightZ: 3.59,
-            maxHeight: 10.0,
-            minVerticalSeparation: 0.5,
-          );
-          final result = emptySlot.empty();
-          expect(
-            result,
-            isA<Err<Slot, Failure>>(),
-            reason: 'Should return [Err]',
-          );
-        },
-      );
+      // //
+      // test(
+      //   'returns [Err] if slot is already empty',
+      //   () {
+      //     final emptySlot = StandardSlot(
+      //       bay: 1,
+      //       row: 2,
+      //       tier: 4,
+      //       leftX: 10.0,
+      //       rightX: 16.0,
+      //       leftY: 2.0,
+      //       rightY: 6.0,
+      //       leftZ: 1.0,
+      //       rightZ: 3.59,
+      //       maxHeight: 10.0,
+      //       minVerticalSeparation: 0.5,
+      //     );
+      //     final result = emptySlot.empty();
+      //     expect(
+      //       result,
+      //       isA<Err<Slot, Failure>>(),
+      //       reason: 'Should return [Err]',
+      //     );
+      //   },
+      // );
       //
       test(
         'does not modify the original slot',

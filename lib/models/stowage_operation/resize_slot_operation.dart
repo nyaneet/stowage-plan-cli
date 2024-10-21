@@ -6,12 +6,12 @@ import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
-import 'package:stowage_plan/models/freight_container/freight_container.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
-/// Operation that puts container to stowage slot
-/// at specified position.
-class PutContainerOperation implements StowageOperation {
+/// Operation that resizes stowage slot at specified position.
+///
+/// Resizing of slot leads to resizing of all upper slots.
+class ResizeSlotOperation implements StowageOperation {
   /// Minimum possible tier number for hold.
   static const int _minHoldTier = 2;
   /// Minimum possible tier number for deck.
@@ -20,8 +20,11 @@ class PutContainerOperation implements StowageOperation {
   static const int _maxHoldTier = 78;
   /// Maximum possible tier number for deck.
   static const int _maxDeckTier = 98;
-  /// The container to be put to stowage slot.
-  final FreightContainer _container;
+  /// Numbering step between two sibling tiers of standard height,
+  /// in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
+  static const _nextTierStep = 2;
+  /// New height for slot that should be resized.
+  final double _height;
   /// Bay number of slot where container should be put.
   final int _bay;
   /// Row number of slot where container should be put.
@@ -29,25 +32,22 @@ class PutContainerOperation implements StowageOperation {
   /// Tier number of slot where container should be put.
   final int _tier;
   ///
-  /// Creates operation that puts the given [container] to stowage slot
-  /// at specified position.
+  /// Creates operation that resizes stowage slot at specified position.
+  ///
+  /// Resizing of slot leads to resizing of all upper slots.
   ///
   /// The [bay], [row] and [tier] numbers specify location of slot.
-  const PutContainerOperation({
-    required FreightContainer container,
+  const ResizeSlotOperation({
+    required double height,
     required int bay,
     required int row,
     required int tier,
-  })  : _container = container,
+  })  : _height = height,
         _bay = bay,
         _row = row,
         _tier = tier;
   ///
   /// Puts container to slot at specified position in [stowageCollection].
-  ///
-  /// If container is added, new slot for upper tier is created
-  /// and added to [stowageCollection], if possible (e.g., new slot does not exceed
-  /// its maximum height).
   ///
   /// Returns [Ok] if container successfully added to [stowageCollection],
   /// and [Err] otherwise.
@@ -55,30 +55,81 @@ class PutContainerOperation implements StowageOperation {
   ResultF<void> execute(StowageCollection collection) {
     final previousCollection = collection.copy();
     collection.removeAllSlots();
-    return _copyUnchangedSlots(collection, previousCollection)
-        .and(_putContainer(collection))
-        .and(_createUpperOddBaySlot(collection))
-        .and(_createUpperEvenBaySlot(collection))
+    return _copySameRowUnchangedSlots(collection, previousCollection)
+        .and(_copyOtherRowsUnchangedSlots(collection, previousCollection))
+        .and(_resizeSlots(collection))
         .and(_copyChangedOddBaySlots(collection, previousCollection))
         .and(_copyChangedEvenBaySlots(collection, previousCollection))
         .inspectErr((_) => _restoreFromBackup(collection, previousCollection));
   }
   ///
-  Ok<void, Failure> _copyUnchangedSlots(
+  /// Resize slot specified by [_bay], [_row], [_tier] and it paired slot
+  /// if it exists.
+  ResultF<void> _resizeSlots(StowageCollection collection) {
+    final resizeSpecifiedResult = _resizeSlot(
+      collection,
+      bay: _bay,
+      row: _row,
+      tier: _tier,
+    );
+    final pairedSlotToResize = collection.findSlot(
+      switch (_bay.isOdd) { true => _bay - 1, false => _bay + 1 },
+      _row,
+      _tier,
+    );
+    if (pairedSlotToResize != null) {
+      final resizePairedResult = _resizeSlot(
+        collection,
+        bay: pairedSlotToResize.bay,
+        row: pairedSlotToResize.row,
+        tier: pairedSlotToResize.tier,
+      );
+      return resizeSpecifiedResult.and(resizePairedResult);
+    } else {
+      return resizeSpecifiedResult;
+    }
+  }
+  ///
+  /// Resized slot at specified position.
+  ResultF<void> _resizeSlot(
+    StowageCollection collection, {
+    required int bay,
+    required int row,
+    required int tier,
+  }) {
+    return _findSlot(bay, row, tier, collection)
+        .andThen((existingSlot) => existingSlot.resizeToHeight(_height))
+        .map((resizedSlot) => collection.addSlot(resizedSlot));
+  }
+  ///
+  ResultF<void> _copyOtherRowsUnchangedSlots(
+    StowageCollection collection,
+    StowageCollection previousCollection,
+  ) {
+    collection.addAllSlots(previousCollection.toFilteredSlotList(
+      shouldIncludeSlot: (s) => s.row != _row,
+    ));
+    return const Ok(null);
+  }
+  ///
+  ResultF<void> _copySameRowUnchangedSlots(
     StowageCollection collection,
     StowageCollection previousCollection,
   ) {
     final (minTierToSkip, maxTierToSkip) = _tier <= _maxHoldTier
-        ? (_tier + 2, _maxHoldTier)
-        : (_tier + 2, _maxDeckTier);
+        ? (_tier + _nextTierStep, _maxHoldTier)
+        : (_tier + _nextTierStep, _maxDeckTier);
     for (var tierToCopy = _minHoldTier;
         tierToCopy <= _maxDeckTier;
-        tierToCopy += 2) {
+        tierToCopy += _nextTierStep) {
       if (tierToCopy >= minTierToSkip && tierToCopy <= maxTierToSkip) {
         continue;
       }
       collection.addAllSlots(
-        previousCollection.toFilteredSlotList(tier: tierToCopy),
+        previousCollection.toFilteredSlotList(
+          tier: tierToCopy,
+          shouldIncludeSlot: (s) => s.row == _row,
+        ),
       );
     }
     return Ok(null);
@@ -89,38 +140,31 @@ class PutContainerOperation implements StowageOperation {
     StowageCollection previousCollection,
   ) {
     final (minTierToChange, maxTierToChange) = _tier <= _maxHoldTier
-        ? (_tier + 2, _maxHoldTier)
-        : (_tier + 2, _maxDeckTier);
+        ? (_tier + _nextTierStep, _maxHoldTier)
+        : (_tier + _nextTierStep, _maxDeckTier);
     for (var tierToChange = minTierToChange;
         tierToChange <= maxTierToChange;
-        tierToChange += 2) {
+        tierToChange += _nextTierStep) {
       final oldSlotsInTier = previousCollection.toFilteredSlotList(
         tier: tierToChange,
-        shouldIncludeSlot: (slot) => slot.bay.isOdd,
+        shouldIncludeSlot: (slot) => slot.bay.isOdd && slot.row == _row,
       );
       for (final oldSlot in oldSlotsInTier) {
         final newBottomSlot = collection.findSlot(
           oldSlot.bay,
           oldSlot.row,
-          oldSlot.tier - 2,
+          oldSlot.tier - _nextTierStep,
         );
-        final oldBottomSlot = previousCollection.findSlot(
-          oldSlot.bay,
-          oldSlot.row,
-          oldSlot.tier - 2,
-        );
-        if (newBottomSlot == null || oldBottomSlot == null) {
+        if (newBottomSlot == null) {
           return Err(Failure(
             message: 'Collection corrupted during operation execution',
             stackTrace: StackTrace.current,
           ));
         }
         final newLeftZ =
-            newBottomSlot.leftZ + newBottomSlot.minVerticalSeparation;
-        final oldLeftZ =
-            oldBottomSlot.leftZ + oldBottomSlot.minVerticalSeparation;
+            newBottomSlot.rightZ + newBottomSlot.minVerticalSeparation;
         final copyResult = oldSlot
-            .shiftByZ(newLeftZ - oldLeftZ)
+            .shiftByZ(newLeftZ - oldSlot.leftZ)
             .map((shiftedSlot) => collection.addSlot(shiftedSlot));
         if (copyResult.isErr()) return copyResult;
       }
@@ -133,20 +177,20 @@ class PutContainerOperation implements StowageOperation {
     StowageCollection previousCollection,
   ) {
     final (minTierToChange, maxTierToChange) = _tier <= _maxHoldTier
-        ? (_tier + 2, _maxHoldTier)
-        : (_tier + 2, _maxDeckTier);
+        ? (_tier + _nextTierStep, _maxHoldTier)
+        : (_tier + _nextTierStep, _maxDeckTier);
     for (var tierToChange = minTierToChange;
         tierToChange <= maxTierToChange;
-        tierToChange += 2) {
+        tierToChange += _nextTierStep) {
       final oldSlotsInTier = previousCollection.toFilteredSlotList(
         tier: tierToChange,
-        shouldIncludeSlot: (slot) => slot.bay.isEven,
+        shouldIncludeSlot: (slot) => slot.bay.isEven && slot.row == _row,
       );
       for (final oldSlot in oldSlotsInTier) {
         final newLeftZ = collection
             .toFilteredSlotList(
               row: oldSlot.row,
-              tier: oldSlot.tier - 2,
+              tier: oldSlot.tier - _nextTierStep,
               shouldIncludeSlot: (slot) =>
                   slot.bay == oldSlot.bay ||
                   slot.bay == oldSlot.bay - 1 ||
@@ -154,89 +198,19 @@ class PutContainerOperation implements StowageOperation {
             )
             .map((s) => s.rightZ + s.minVerticalSeparation)
             .maxOrNull;
-        final oldLeftZ = previousCollection
-            .toFilteredSlotList(
-              row: oldSlot.row,
-              tier: oldSlot.tier - 2,
-              shouldIncludeSlot: (slot) =>
-                  slot.bay == oldSlot.bay ||
-                  slot.bay == oldSlot.bay - 1 ||
-                  slot.bay == oldSlot.bay + 1,
-            )
-            .map((s) => s.rightZ + s.minVerticalSeparation)
-            .toList()
-            .maxOrNull;
-        if (newLeftZ == null || oldLeftZ == null) {
+        if (newLeftZ == null) {
           return Err(Failure(
             message: 'Collection corrupted during operation execution',
             stackTrace: StackTrace.current,
           ));
         }
         final copyResult = oldSlot
-            .shiftByZ(newLeftZ - oldLeftZ)
+            .shiftByZ(newLeftZ - oldSlot.leftZ)
             .map((shiftedSlot) => collection.addSlot(shiftedSlot));
         if (copyResult.isErr()) return copyResult;
       }
     }
     return Ok(null);
-  }
-  ///
-  /// Puts container to slot at specified position in [collection].
-  /// And creates new slot for upper tier if needed.
-  ResultF<void> _putContainer(StowageCollection collection) {
-    return _findSlot(_bay, _row, _tier, collection).andThen(
-      (existingSlot) {
-        return existingSlot.withContainer(_container);
-      },
-    ).map((slotWithContainer) {
-      collection.addSlot(slotWithContainer);
-    });
-  }
-  ///
-  ResultF<void> _createUpperOddBaySlot(StowageCollection collection) {
-    if (_bay.isEven) return const Ok(null);
-    return _findSlot(_bay, _row, _tier, collection).andThen((slot) {
-      return slot.createUpperSlot();
-    }).map((upperSlot) {
-      if (upperSlot == null) return;
-      collection.addSlot(upperSlot);
-    });
-  }
-  ///
-  ResultF<void> _createUpperEvenBaySlot(StowageCollection collection) {
-    if (_bay.isOdd) return const Ok(null);
-    return _findSlot(_bay, _row, _tier, collection).andThen(
-      (slot) {
-        return slot.createUpperSlot();
-      },
-    ).andThen(
-      (upperSlot) {
-        if (upperSlot == null) return const Ok(null);
-        final leftZ = collection
-            .toFilteredSlotList(
-              row: upperSlot.row,
-              tier: upperSlot.tier - 2,
-              shouldIncludeSlot: (s) =>
-                  s.bay == upperSlot.bay ||
-                  s.bay == upperSlot.bay - 1 ||
-                  s.bay == upperSlot.bay + 1,
-            )
-            .map((s) => s.rightZ + s.minVerticalSeparation)
-            .maxOrNull;
-        if (leftZ == null) {
-          return Err(Failure(
-            message: 'Collection corrupted during operation execution',
-            stackTrace: StackTrace.current,
-          ));
-        }
-        return upperSlot.shiftByZ(leftZ - upperSlot.leftZ);
-      },
-    ).map(
-      (upperSlot) {
-        if (upperSlot == null) return;
-        collection.addSlot(upperSlot);
-      },
-    );
   }
   ///
   /// Restores [collection] from [backup].
@@ -260,7 +234,7 @@ class PutContainerOperation implements StowageOperation {
     final existingSlot = stowageCollection.findSlot(bay, row, tier);
     if (existingSlot == null) {
       return Err(Failure(
-        message: 'Slot to put container not found',
+        message: 'Slot to resize not found',
         stackTrace: StackTrace.current,
       ));
     }

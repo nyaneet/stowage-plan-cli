@@ -1,4 +1,6 @@
+import 'package:stowage_plan/models/freight_container/container_1a.dart';
 import 'package:stowage_plan/models/freight_container/container_1aa.dart';
+import 'package:stowage_plan/models/freight_container/container_1c.dart';
 import 'package:stowage_plan/models/freight_container/container_1cc.dart';
 import 'package:stowage_plan/models/freight_container/freight_container_type.dart';
 ///
@@ -50,6 +52,16 @@ abstract interface class FreightContainer {
     double cargoWeight = 0.0,
   }) =>
       switch (sizeCode.trim().toUpperCase()) {
+        '1A' => Container1A(
+            id: id,
+            tareWeight: tareWeight,
+            cargoWeight: cargoWeight,
+          ),
+        '1C' => Container1C(
+            id: id,
+            tareWeight: tareWeight,
+            cargoWeight: cargoWeight,
+          ),
         '1AA' => Container1AA(
             id: id,
             tareWeight: tareWeight,

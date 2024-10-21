@@ -10,12 +10,18 @@ class StandardSlot implements Slot {
   ///
   /// 2.59 m in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
   static const double _standardHeight = 2.59;
+  // static const double _standardHeight = 2.438;
   ///
-  /// Maximum possible tier number in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
+  /// Maximum possible tier number,
+  /// in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
   static const int _maxTier = 98;
   ///
-  ///
+  /// Numbering step between two sibling tiers of standard height,
+  /// in accordance with [ISO 9711-1, 3.3](https://www.iso.org/ru/standard/17568.html)
   static const _nextTierStep = 2;
+  //
+  @override
+  final bool isActive;
   //
   @override
   final int bay;
@@ -58,6 +64,7 @@ class StandardSlot implements Slot {
   /// rules for its separation along the vertical axis
   /// will be identical.
   StandardSlot({
+    this.isActive = true,
     required this.bay,
     required this.row,
     required this.tier,
@@ -71,6 +78,44 @@ class StandardSlot implements Slot {
     required this.minVerticalSeparation,
     this.containerId,
   });
+  //
+  @override
+  Slot activate() {
+    return StandardSlot(
+      isActive: true,
+      bay: bay,
+      row: row,
+      tier: tier,
+      leftX: leftX,
+      rightX: rightX,
+      leftY: leftY,
+      rightY: rightY,
+      leftZ: leftZ,
+      rightZ: rightZ,
+      maxHeight: maxHeight,
+      minVerticalSeparation: minVerticalSeparation,
+      containerId: containerId,
+    );
+  }
+  //
+  @override
+  Slot deactivate() {
+    return StandardSlot(
+      isActive: false,
+      bay: bay,
+      row: row,
+      tier: tier,
+      leftX: leftX,
+      rightX: rightX,
+      leftY: leftY,
+      rightY: rightY,
+      leftZ: leftZ,
+      rightZ: rightZ,
+      maxHeight: maxHeight,
+      minVerticalSeparation: minVerticalSeparation,
+      containerId: null,
+    );
+  }
   //
   @override
   ResultF<Slot?> createUpperSlot({double? verticalSeparation}) {
@@ -92,6 +137,7 @@ class StandardSlot implements Slot {
     }
     if (rightZUpper > maxHeight) return Ok(null);
     return Ok(StandardSlot(
+      isActive: isActive,
       bay: bay,
       row: row,
       tier: tierUpper,
@@ -117,6 +163,7 @@ class StandardSlot implements Slot {
       ));
     }
     return Ok(StandardSlot(
+      isActive: isActive,
       bay: bay,
       row: row,
       tier: tier,
@@ -134,13 +181,8 @@ class StandardSlot implements Slot {
   //
   @override
   ResultF<Slot> empty() {
-    if (containerId == null) {
-      return Err(Failure(
-        message: 'Slot already empty',
-        stackTrace: StackTrace.current,
-      ));
-    }
     return Ok(StandardSlot(
+      isActive: isActive,
       bay: bay,
       row: row,
       tier: tier,
@@ -158,6 +200,7 @@ class StandardSlot implements Slot {
   //
   @override
   Slot copy() => StandardSlot(
+        isActive: isActive,
         bay: bay,
         row: row,
         tier: tier,
@@ -175,9 +218,9 @@ class StandardSlot implements Slot {
   @override
   resizeToHeight(double height) {
     final rightZAdjusted = leftZ + height;
-    if (containerId != null) {
+    if (containerId != null && (rightZ - leftZ) != height) {
       return Err(Failure(
-        message: 'Cannot resize occupied slot',
+        message: 'Cannot resize occupied slot to new height.',
         stackTrace: StackTrace.current,
       ));
     }
@@ -194,6 +237,7 @@ class StandardSlot implements Slot {
       ));
     }
     return Ok(StandardSlot(
+      isActive: isActive,
       bay: bay,
       row: row,
       tier: tier,
@@ -220,6 +264,7 @@ class StandardSlot implements Slot {
       ));
     }
     return Ok(StandardSlot(
+      isActive: isActive,
       bay: bay,
       row: row,
       tier: tier,
@@ -236,6 +281,9 @@ class StandardSlot implements Slot {
   }
   //
   @override
-  String toString() =>
-      'Key: ${'$bay'.padLeft(2, '0')}${'$row'.padLeft(2, '0')}${'$tier'.padLeft(2, '0')}\nInstalled container: $containerId';
+  String toString() => '''
+Key: ${'$bay'.padLeft(2, '0')}${'$row'.padLeft(2, '0')}${'$tier'.padLeft(2, '0')}
+Installed container: $containerId
+Is active: $isActive
+''';
 }

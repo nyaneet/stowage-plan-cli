@@ -10,16 +10,20 @@ extension PrettyPrint on StowageCollection {
   static const String _rowNumbersPad = '   ';
   ///
   /// Prints a textual representation of the stowage plan
-  /// for all bays. If [usePairs] is `true`, the method prints the stowage plan for pairs of adjacent
+  /// for all bays.
+  ///
+  /// If [usePairs] is `true`, the method prints the stowage plan for pairs of adjacent
   /// odd and even bays. Otherwise, it prints the stowage plan for each bay individually.
-  void printAll({bool usePairs = true}) {
+  ///
+  /// If [printOnlyActive] is `true`, only active slots are printed.
+  void printAll({bool usePairs = true, bool printOnlyActive = true}) {
     if (usePairs) {
       for (final group in _iterateBayPairs()) {
-        _printBayPair(group.odd, group.even);
+        _printBayPair(group.odd, group.even, printOnlyActive: printOnlyActive);
       }
     } else {
       for (int bay in _iterateBays()) {
-        _printBayPair(bay, null);
+        _printBayPair(bay, null, printOnlyActive: printOnlyActive);
       }
     }
   }
@@ -29,7 +33,13 @@ extension PrettyPrint on StowageCollection {
   ///
   /// The [oddBay] and [evenBay] parameters specify the pair of bays for which plan should be printed.
   /// If [oddBay] or [evenBay] is null, plan for a single bay is printed instead.
-  void _printBayPair(int? oddBay, int? evenBay) {
+  ///
+  /// If [printOnlyActive] is `true`, only active slots are printed.
+  void _printBayPair(
+    int? oddBay,
+    int? evenBay, {
+    required bool printOnlyActive,
+  }) {
     final slotsInBayPair = toFilteredSlotList(
       shouldIncludeSlot: (slot) => slot.bay == oddBay || slot.bay == evenBay,
     );
@@ -52,10 +62,15 @@ extension PrettyPrint on StowageCollection {
         );
         Slot? slotForDisplay =
             slots.firstWhereOrNull((s) => s.containerId != null) ??
-                slots.firstOrNull;
+                (printOnlyActive
+                    ? slots.firstWhereOrNull((s) => s.isActive)
+                    : slots.firstOrNull);
         switch (slotForDisplay) {
           case null:
             slotsLine += _nullSlot;
+            break;
+          case Slot(isActive: false):
+            slotsLine += printOnlyActive ? _nullSlot : _emptySlot;
             break;
           case Slot(containerId: final int _):
             slotsLine += _occupiedSlot;

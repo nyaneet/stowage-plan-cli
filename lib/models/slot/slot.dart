@@ -5,6 +5,11 @@ import 'package:stowage_plan/models/freight_container/freight_container.dart';
 /// a place where container can be loaded.
 abstract interface class Slot {
   ///
+  /// Either [Slot] is active or not.
+  ///
+  /// TODO: complete doc
+  bool get isActive;
+  ///
   /// Bay number of stowage slot,
   /// in accordance with stowage numbering system for rows
   /// [ISO 9711-1, 3.1](https://www.iso.org/ru/standard/17568.html)
@@ -56,7 +61,15 @@ abstract interface class Slot {
   /// If slot is empty, [containerId] is `null`.
   int? get containerId;
   ///
-  /// Creates an empty stowage slot for the next tier above this slot.
+  /// Creates and returns a copy of this slot with [isActive] set to `true`.
+  Slot activate();
+  ///
+  /// Creates and returns a copy of this slot with [isActive] set to `false`.
+  ///
+  /// If any container is placed in this slot, it will be removed.
+  Slot deactivate();
+  ///
+  /// Creates and returns an empty stowage slot for the next tier above this slot.
   ///
   /// The [verticalSeparation] parameter specifies the vertical distance between
   /// this slot and the new slot. If [verticalSeparation] is `null`, the

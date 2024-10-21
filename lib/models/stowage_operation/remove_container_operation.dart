@@ -1,6 +1,7 @@
+import 'package:stowage_plan/core/extension_boolean_operations.dart';
+import 'package:stowage_plan/core/extension_transform.dart';
 import 'package:stowage_plan/core/failure.dart';
 import 'package:stowage_plan/core/result.dart';
-import 'package:stowage_plan/core/result_extension.dart';
 import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
