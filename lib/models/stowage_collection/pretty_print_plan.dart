@@ -53,7 +53,13 @@ extension PrettyPrint on StowageCollection {
     final maxRow = slotsInBayPair.map((slot) => slot.row).max;
     final withZeroRow = slotsInBayPair.any((slot) => slot.row == 0);
     final maxTier = slotsInBayPair.map((slot) => slot.tier).max;
+    bool isDeckEmpty = true;
+    bool isHoldEmpty = true;
     for (int tier in _iterateTiers(maxTier)) {
+      if (tier == 78 || tier == 98) {
+        isDeckEmpty = true;
+        isHoldEmpty = true;
+      }
       final String tierNumber = tier.toString().padLeft(2, '0');
       String slotsLine = '';
       for (int row in _iterateRows(maxRow, withZeroRow)) {
@@ -73,6 +79,8 @@ extension PrettyPrint on StowageCollection {
             slotsLine += printOnlyActive ? _nullSlot : _emptySlot;
             break;
           case Slot(containerId: final int _):
+            if (tier >= 80 && tier <= 98) isDeckEmpty = false;
+            if (tier >= 2 && tier <= 78) isHoldEmpty = false;
             slotsLine += _occupiedSlot;
             break;
           case Slot(containerId: null):
@@ -80,7 +88,16 @@ extension PrettyPrint on StowageCollection {
             break;
         }
       }
-      if (slotsLine.trim().isNotEmpty) print('$tierNumber $slotsLine');
+      if (slotsLine.trim().isNotEmpty) {
+        print('$tierNumber $slotsLine');
+      } else {
+        if (tier >= 80 && tier <= 98 && !isDeckEmpty) {
+          print('$tierNumber $slotsLine');
+        }
+        if (tier >= 2 && tier <= 78 && !isHoldEmpty) {
+          print('$tierNumber $slotsLine');
+        }
+      }
     }
     String rowNumbers = _rowNumbersPad;
     for (int row in _iterateRows(maxRow, withZeroRow)) {
