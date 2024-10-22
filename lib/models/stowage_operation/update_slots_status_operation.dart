@@ -1,6 +1,7 @@
 import 'package:stowage_plan/core/extension_boolean_operations.dart';
 import 'package:stowage_plan/core/extension_transform.dart';
 import 'package:stowage_plan/core/result.dart';
+import 'package:stowage_plan/models/slot/slot.dart';
 import 'package:stowage_plan/models/stowage_operation/stowage_operation.dart';
 import 'package:stowage_plan/models/stowage_collection/stowage_collection.dart';
 ///
@@ -31,7 +32,9 @@ class UpdateSlotsStatusOperation implements StowageOperation {
   ResultF<void> execute(StowageCollection collection) {
     final previousCollection = collection.copy();
     return _activateAllSlotsInRow(collection)
-        .and(_deactivateDanglingSlots(collection))
+        .and(_deactivateDanglingSlotsInRow(collection))
+        .and(_deactivateOverlappedOddSlots(collection))
+        .and(_deactivateOverlappedEvenSlots(collection))
         .inspectErr((_) => _restoreFromBackup(collection, previousCollection));
   }
   ///
@@ -49,18 +52,18 @@ class UpdateSlotsStatusOperation implements StowageOperation {
     return const Ok(null);
   }
   ///
-  ResultF<void> _deactivateDanglingSlots(
+  ResultF<void> _deactivateDanglingSlotsInRow(
     StowageCollection collection,
   ) {
     _iterateBays(collection, sort: true).forEach(
       (bay) {
-        _deactivateDanglingSlotsInBay(
+        _deactivateDanglingSlotsInRowBay(
           bay,
           _minDeckTier,
           _maxDeckTier,
           collection,
         );
-        _deactivateDanglingSlotsInBay(
+        _deactivateDanglingSlotsInRowBay(
           bay,
           _minHoldTier,
           _maxHoldTier,
@@ -71,7 +74,7 @@ class UpdateSlotsStatusOperation implements StowageOperation {
     return const Ok(null);
   }
   ///
-  ResultF<void> _deactivateDanglingSlotsInBay(
+  ResultF<void> _deactivateDanglingSlotsInRowBay(
     int bay,
     int minTier,
     int maxTier,
@@ -97,6 +100,66 @@ class UpdateSlotsStatusOperation implements StowageOperation {
         collection.addSlot(currentSlot.deactivate());
       }
     }
+    return const Ok(null);
+  }
+  ///
+  ResultF<void> _deactivateOverlappedOddSlots(collection) {
+    final slotsToCheck = collection.toFilteredSlotList(
+      row: _row,
+      shouldIncludeSlot: (s) => s.bay.isOdd && s.isActive,
+    );
+    slotsToCheck.forEach((slot) {
+      final overlappedSlot = <Slot?>[
+        collection.findSlot(
+          slot.bay + 1,
+          slot.row,
+          slot.tier,
+        ), // next even slot
+        collection.findSlot(
+          slot.bay - 1,
+          slot.row,
+          slot.tier,
+        ), // previous even slot
+      ];
+      if (overlappedSlot.any((s) => s?.containerId != null)) {
+        collection.addSlot(slot.deactivate());
+      }
+    });
+    return const Ok(null);
+  }
+  ///
+  ResultF<void> _deactivateOverlappedEvenSlots(collection) {
+    final slotsToCheck = collection.toFilteredSlotList(
+      row: _row,
+      shouldIncludeSlot: (s) => s.bay.isEven && s.isActive,
+    );
+    slotsToCheck.forEach((slot) {
+      final overlappedSlot = <Slot?>[
+        collection.findSlot(
+          slot.bay + 1,
+          slot.row,
+          slot.tier,
+        ), // next odd slot
+        collection.findSlot(
+          slot.bay - 1,
+          slot.row,
+          slot.tier,
+        ), // previous odd slot
+        collection.findSlot(
+          slot.bay + 2,
+          slot.row,
+          slot.tier,
+        ), // next even slot
+        collection.findSlot(
+          slot.bay - 2,
+          slot.row,
+          slot.tier,
+        ), // previous even slot
+      ];
+      if (overlappedSlot.any((s) => s?.containerId != null)) {
+        collection.addSlot(slot.deactivate());
+      }
+    });
     return const Ok(null);
   }
   ///
